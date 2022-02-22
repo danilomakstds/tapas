@@ -1,0 +1,84 @@
+.sidenav {
+    height: 100%;
+    width: 70px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background: rgb(42,48,66);
+    background: radial-gradient(circle, rgba(42,48,66,1) 0%, rgba(42,48,66,1) 100%);
+    overflow-x: hidden;
+    //transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: 0 0.75rem 1.5rem rgb(18 38 63 / 3%)
+  }
+  
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+  .fixed {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1030;
+    box-shadow: 0 0.75rem 1.5rem rgb(18 38 63 / 3%)
+  }
+
+  #main {
+    background: rgb(243,243,246);
+    background: radial-gradient(circle, rgba(243,243,246,1) 0%, rgba(248,248,251,1) 100%);
+  }
+
+  .dropdown-item {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .nav-link {
+    margin-left: 15px !important;
+    position: relative;
+  }
+
+  .badge-danger {
+    background-color: #F46A6A !important;
+  }
+
+  .badge-pill {
+    border-radius: 75px;
+    top: 0;
+    right: -5px;
+    position: absolute;
+  }
+
+  .main-icon {
+    font-size: 20px;
+    margin-top: 5px;
+  }
+
+  .dropdown-menu {
+    right: 0;
+    top: 35px;
+  }

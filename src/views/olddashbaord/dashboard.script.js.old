@@ -1,0 +1,43 @@
+// @ is an alias to /src
+import "../scss/dashboard.scss";
+//import Calendar from '@/components/Calendar.vue'
+
+export default {
+    name: 'Dashboard',
+    watch: {
+    },
+    data() {
+        return {
+            isSideNavOpen: false
+        }
+    },
+    components: {
+        //Calendar
+    },
+    methods: {
+        toggleSideNav: function () {
+            if (!this.isSideNavOpen) {
+                this.isSideNavOpen = true;
+                this.adjustSize(250);
+            } else {
+                this.isSideNavOpen = false;
+                this.adjustSize(70);
+            }
+        },
+        adjustSize: function (size) {
+            window.$('#sideNav').css("width", size + "px");
+            window.$('#main').css("marginLeft", size + "px");
+            window.$('#fixed').css("left", size + "px");
+            window.$('.navbar').width(window.$('#main').width());
+        },
+        onResize: function () {
+            this.adjustSize(window.$('#sideNav').width());
+        }
+    },
+    mounted() {
+        this.toggleSideNav();
+        window.onresize = function () {
+            this.onResize();
+        }.bind(this);
+    },
+}

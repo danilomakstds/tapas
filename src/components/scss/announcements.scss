@@ -1,0 +1,39 @@
+
+        .animated_mobile {
+          text-indent: 8px;
+          color:#3a7ca5;
+        }
+        .last_word_mobile {
+            color:#3a7ca5;
+        }
+        .letter_s_mobile {
+            color:#3a7ca5;
+        }
+        .animated_mobile:before {
+          content: "ECM";
+          -webkit-animation: topToBottom 5s infinite 0s;
+          -moz-animation: topToBottom 5s infinite 0s;
+          animation: topToBottom 5s infinite 0s;
+        }
+        @-webkit-keyframes topToBottom {
+          30% {
+            content: "ECM";
+          }
+          50% {
+            content: "PCM";
+          }
+          100% {
+            content: "ECU";
+          }
+        }
+        @keyframes topToBottom {
+          30% {
+            content: "ECM";
+          }
+          50% {
+            content: "PCM";
+          }
+          100% {
+            content: "ECU";
+          }
+        }

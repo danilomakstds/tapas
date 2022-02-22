@@ -1,0 +1,56 @@
+<template>
+  <div class="dashboard">
+    <!--<Calendar/> -->
+    
+
+    <div id="main" style="height:500px"> 
+      <nav class="navbar navbar-expand navbar-light bg-white fixed pt-2 pb-2">
+        <a class="navbar-brand ps-4"  @click="toggleSideNav">
+          <font-awesome-icon :icon="['fa', 'bars']"/>
+        </a>
+        <button class="navbar-toggler me-2" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+          <div class="navbar-nav pe-3">
+            <a class="nav-item nav-link">
+              <span class="badge badge-pill badge-danger">9</span>
+              <font-awesome-icon :icon="['fa', 'bell']" class="main-icon"/>
+            </a>
+            <a class="nav-item nav-link">
+              <font-awesome-icon :icon="['fa', 'gear']" class="main-icon"/>
+            </a>
+            <a class="nav-item nav-link">
+              <div class="dropdown dropleft">
+                <a role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <img src="../assets/images/avatar.jpg" class="rounded-circle" style="height:30px;"/>
+                  <span class="ms-2">Danilo</span>
+                  <font-awesome-icon :icon="['fa', 'angle-down']" style="font-size: 10px" class="ms-2"/>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="#">
+                    <font-awesome-icon :icon="['fa', 'user']" class="me-2"/> Profile</a>
+                  <a class="dropdown-item" href="#">
+                    <font-awesome-icon :icon="['fa', 'wallet']" class="me-2"/> My Wallet</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">
+                    <font-awesome-icon :icon="['fa', 'arrow-right-from-bracket']" class="me-2"/> Logout</a>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </nav>
+      
+        <br/><br/><br/><br/><br/>
+
+    </div>
+
+    <div id="sideNav" class="sidenav">
+    </div>
+  </div>
+
+  
+</template>
+
+<script src="../components/js/dashboard.script.js"></script>

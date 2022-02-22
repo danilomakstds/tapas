@@ -1,0 +1,17 @@
+html {
+    height: 100%;
+    width: 100%;
+    font-family: "Poppins",sans-serif;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #556EE6 !important;
+    border-color: #556EE6 !important;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #485ec4 !important;
+    border-color: #4458b8 !important;
+}
