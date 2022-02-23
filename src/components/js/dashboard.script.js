@@ -9,6 +9,7 @@ import Constants from '../../assets/constants/app.constants'
 import SettingsConstants from '../../assets/constants/settings.constants'
 import store from '../../store'
 import { mapState } from 'vuex'
+import moment from "moment";
 
 export default {
     name: 'Dashboard',
@@ -122,15 +123,7 @@ export default {
         formatDigits: function (date) {
             var time = new Date(date);
             var utc = new Date(date).toJSON().slice(0, 10).replace(/-/g, '/');
-            var formated = utc + " - " + format(time.getHours()) + ' : ' + format(time.getMinutes()) + ' : ' + format(time.getSeconds());
-
-            function format(hms) {
-                if (hms.toString().length == 1) {
-                    return '0' + hms.toString();
-                } else {
-                    return hms.toString();
-                }
-            }
+            var formated = utc + " - " + moment(time).format('LTS');
             return formated;
         },
         projectedTimeOut: function (date) {
@@ -155,7 +148,8 @@ export default {
             })
                 .then(function (response) {
                     console.log(response);
-                })
+                    this.$refs.calendar.emitFunctions();
+                }.bind(this))
                 .catch(function (response) {
                     console.log(response);
                 });
@@ -163,7 +157,6 @@ export default {
     },
     mounted() {
         this.isOnDuty = this.isUserTimeIn;
-        this.timeIn = this.userTimeIn;
         this.initSideNav();
     },
 }

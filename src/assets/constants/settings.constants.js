@@ -1,6 +1,6 @@
 
 
-const BASE_URL = 'http://127.0.0.1/maks-tapas-REST';
+const BASE_URL = 'http://127.0.0.1/tapas-rest';
 const ROUTE_URL = '';
 //const ROUTE_URL = '/wordpress/build/';
 const CONSUMER_KEY = 'ck_99b5a07a9b4f96d13f61ce018e098f9a0c6c5c9c';

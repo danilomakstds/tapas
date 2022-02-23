@@ -20,6 +20,7 @@
     "boxicons": "^2.1.1",
     "core-js": "^3.6.5",
     "fullcalendar": "^5.10.2",
+    "moment": "^2.29.1",
     "sweetalert2": "^11.4.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

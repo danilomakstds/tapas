@@ -93,7 +93,7 @@
         <div class="col-md-9 mt-3">
           <div class="card border-0">
             <div class="card-body card-calendar">
-              <Calendar/>
+              <Calendar ref="calendar"/>
             </div>
           </div>
         </div>
@@ -124,9 +124,9 @@
                 <tbody>
                   <tr>
                     <th scope="row"><font-awesome-icon :icon="['fa', 'business-time']" class="me-2 text-secondary" /></th>
-                    <td>{{formatDigits(timeIn)}}</td>
+                    <td>{{formatDigits(userTimeIn)}}</td>
                     <th scope="row"><font-awesome-icon :icon="['fa', 'hourglass-end']" class="me-2 text-secondary" /></th>
-                    <td>{{formatDigits(projectedTimeOut(timeIn))}}</td>
+                    <td>{{formatDigits(projectedTimeOut(userTimeIn))}}</td>
                   </tr>
                 </tbody>
               </table>

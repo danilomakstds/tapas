@@ -27,6 +27,12 @@ export default createStore({
       state.userTimeIn = false;
     },
   },
+  getters: {
+
+  },
+  methods: {
+
+  },
   actions: {
   },
   modules: {

@@ -1,0 +1,23 @@
+@import url(./aldus.css);
+
+.login-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+.login {
+    max-width:450px; margin:0 auto;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.aldus {
+    font-family: "Aldus" !important;
+}

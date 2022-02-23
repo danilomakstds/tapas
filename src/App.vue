@@ -6,7 +6,7 @@
   <router-view/>
   <div class="footerdiv text-secondary position-absolute start-0 w-100 p-3">
     <span style="font-size: 13px">
-    Design & Develop by Maks@DevTeam <br/> 2022 © MAKS.</span>
+    Designed & Developed by Maks@DevTeam <br/> 2022 © MAKS.</span>
   </div>
 </template>
 

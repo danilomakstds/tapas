@@ -8,6 +8,7 @@ import Constants from '../../assets/constants/app.constants'
 import SettingsConstants from '../../assets/constants/settings.constants'
 import store from '../../store'
 import { mapState } from 'vuex'
+import moment from 'moment'
 
 export default {
     name: 'Calendar',
@@ -37,12 +38,16 @@ export default {
                     //alert(info.event.date);
                 }
             },
-            holidayEvents: []
+            holidayEvents: [],
+            timeInOutEvents: []
         }
     },
     methods: {
         handleDateClick: function (arg) {
             alert('date click! ' + arg.dateStr)
+        },
+        resetCalender: function () {
+            this.calendarOptions.events = [];
         },
         getAllHolidays: function () {
             axios.get(SettingsConstants.BASE_URL + '/getallholidays.REST.php', { crossdomain: true })
@@ -61,9 +66,39 @@ export default {
                     store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
                 }.bind(this));
         },
+        getAllTimeInOut: function () {
+            axios.get(SettingsConstants.BASE_URL + '/getallTimeInOut.REST.php', { crossdomain: true })
+                .then(function (response) {
+                    response.data.forEach(function (e) {
+                        var event = [];
+                        var start = moment(e.timein);
+                        var end = moment(e.timeout);
+                        var hours = end.diff(start, 'hours');
+                        event.start = start.format();
+                        event.end = end.format();
+                        if (isNaN(hours)) {
+                            event.title = start.format('LT') + " - Time In";
+                            event.backgroundColor = "#D1E7DD";
+                            event.textColor = "#555";
+                        } else {
+                            event.title = hours - 1 + "h - Time In - Time Out";
+                            event.backgroundColor = "#5CB85C";
+                        }
+                        event.allDay = true;
+                        event.borderColor = "#5CB85C";
+                        this.calendarOptions.events.push(event);
+                    }.bind(this));
+                    store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
+                }.bind(this));
+        },
+        emitFunctions: function () {
+            this.resetCalender();
+            this.getAllHolidays();
+            this.getAllTimeInOut();
+        }
     },
     created() {
-        this.getAllHolidays();
+        this.emitFunctions();
     },
     mounted() {
 
