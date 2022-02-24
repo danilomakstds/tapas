@@ -8,6 +8,7 @@
     <span style="font-size: 13px">
     Designed & Developed by Maks@DevTeam <br/> 2022 © MAKS.</span>
   </div>
+  
 </template>
 
 <script>

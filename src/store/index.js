@@ -7,6 +7,7 @@ export default createStore({
     isUserTimeIn: null,
     userTimeIn: null,
     sessionData: null,
+    lastSelectedView: null
   },
   mutations: {
     SET_FULL_CALENDAR_PROPS: function (state, fullCalendarProps) {
@@ -32,7 +33,13 @@ export default createStore({
     },
     RESET_SESSION_DATA: function (state) {
       state.sessionData = null;
-    }
+    },
+    SET_LAST_SELECTED_VIEW: function (state, lastSelectedView) {
+      state.lastSelectedView = lastSelectedView;
+    },
+    RESET_LAST_SELECTED_VIEW: function (state) {
+      state.lastSelectedView = null;
+    },
   },
   getters: {
 
@@ -41,8 +48,10 @@ export default createStore({
 
   },
   actions: {
+
   },
   modules: {
+
   },
   plugins: [createPersistedState()],
 })

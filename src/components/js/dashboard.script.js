@@ -1,9 +1,13 @@
 // @ is an alias to /src
 import "../scss/dashboard.scss";
 import axios from "axios";
+
 import Calendar from '@/components/Calendar.vue'
 import Clock from '@/components/Clock.vue'
 import Announcements from '@/components/Announcements.vue'
+import Header from '@/components/Header.vue'
+import SideNav from '@/components/SideNav.vue'
+
 import Swal from 'sweetalert2'
 import Constants from '../../assets/constants/app.constants'
 import SettingsConstants from '../../assets/constants/settings.constants'
@@ -32,44 +36,12 @@ export default {
     components: {
         Calendar,
         Clock,
+        Header,
+        SideNav,
         Announcements,
         Constants
     },
     methods: {
-        initSideNav: function () {
-            var showNavbar = (toggleId, navId, bodyId, headerId) => {
-                const toggle = document.getElementById(toggleId),
-                    nav = document.getElementById(navId),
-                    bodypd = document.getElementById(bodyId),
-                    headerpd = document.getElementById(headerId)
-
-                // Validate that all variables exist
-                if (toggle && nav && bodypd && headerpd) {
-                    toggle.addEventListener('click', () => {
-                        // show navbar
-                        nav.classList.toggle('show')
-                        // change icon
-                        toggle.classList.toggle('bx-x')
-                        // add padding to body
-                        bodypd.classList.toggle('dashboard-pd')
-                        // add padding to header
-                        headerpd.classList.toggle('body-pd')
-                    })
-                }
-            }
-
-            showNavbar('header-toggle', 'nav-bar', 'body-pd', 'header')
-
-            const linkColor = document.querySelectorAll('.nav_link')
-
-            function colorLink() {
-                if (linkColor) {
-                    linkColor.forEach(l => l.classList.remove('active'))
-                    this.classList.add('active')
-                }
-            }
-            linkColor.forEach(l => l.addEventListener('click', colorLink));
-        },
         setTimeIn: function () {
             var today = new Date();
             var swalText = "You will be starting your work!";
@@ -143,7 +115,7 @@ export default {
             }
             axios({
                 method: "post",
-                url: SettingsConstants.BASE_URL + "/postTimeInOut.REST.php?type=" + type + "&userId=" + this.sessionData.id,
+                url: SettingsConstants.BASE_URL + "/post-time-in-out.rest.php?type=" + type + "&userId=" + this.sessionData.id,
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data" },
             })
@@ -154,17 +126,9 @@ export default {
                 .catch(function (response) {
                     console.log(response);
                 });
-        },
-        logOutUser: function () {
-            store.commit('RESET_SESSION_DATA');
-            if (!this.sessionData) {
-                window.location.href = '/';
-            }
         }
     },
     mounted() {
         this.isOnDuty = this.isUserTimeIn;
-        console.log(this.sessionData);
-        this.initSideNav();
     }
 }

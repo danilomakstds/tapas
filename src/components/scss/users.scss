@@ -1,0 +1,15 @@
+.users {
+    font-size: 13px !important;
+}
+
+tbody {
+    border-top: none !important;
+}
+
+#editbutton,#resignbutton {
+    opacity: .3;
+}
+
+#editbutton:hover, #resignbutton:hover {
+    opacity: 1;
+}

@@ -1,92 +1,10 @@
 <template>
   <div class="dashboard text-start" id="body-pd">
 
-    <header class="header" id="header">
-        <div class="header_toggle"> <font-awesome-icon :icon="['fa', 'bars']" id="header-toggle" /></div>
-        <!-- <div class="header_img"> <img src="https://i.imgur.com/hczKIze.jpg" alt=""> </div> -->
-        <div class="d-flex flex-row-reverse bd-highlight">
-          
-          <div class="p-2 bd-highlight ps-3">
-            <font-awesome-icon :icon="['fa', 'gear']" class="main-icon animate_infinite"/>
-          </div>
-          
-          <div class="p-2 bd-highlight position-relative ps-3">
-            <div class="dropdown dropleft">
-              <a role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="../assets/images/avatar.jpg" class="rounded-circle" style="height:30px;"/>
-                <span class="ms-2">{{sessionData.user_firstname}}</span>
-                <font-awesome-icon :icon="['fa', 'angle-down']" style="font-size: 10px" class="ms-2"/>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">
-                  <font-awesome-icon :icon="['fa', 'user']" class="me-2"/> Profile</a>
-                <a class="dropdown-item" href="#">
-                  <font-awesome-icon :icon="['fa', 'wallet']" class="me-2"/> My Wallet</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" @click="logOutUser">
-                  <font-awesome-icon :icon="['fa', 'arrow-right-from-bracket']" class="me-2"/> Logout</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-2 bd-highlight position-relative ps-3">
-            <span class="badge badge-pill badge-danger">9</span>
-            <font-awesome-icon :icon="['fa', 'bell']" class="main-icon"/>
-          </div>
-        </div>
-    </header>
-    <div class="l-navbar" id="nav-bar">
-        <nav class="nav">
-           <div>
-              <a href="#" class="nav_logo">
-                <span class="nav_logo-name">
-                  <img src="../assets/images/maks.png" class="me-3" style="height:35px"/> T A P A S
-                </span>
-              </a>
-              <div class="nav_list">
-                <a href="#" class="nav_link active">
-                  <font-awesome-icon :icon="['fa', 'chart-line']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Dashboard</span>
-                </a>
-                <a href="#" class="nav_link">
-                  <font-awesome-icon :icon="['fa', 'money-check-dollar']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Payslips</span>
-                </a>
-                <a href="#" class="nav_link">
-                  <font-awesome-icon :icon="['fa-solid', 'mug-hot']" class="ms-2 nav_icon" />
-                  <span class="nav_name">&nbsp;Leave</span>
-                </a>
-                <a href="#" class="nav_link">
-                  <font-awesome-icon :icon="['fa-solid', 'clock-four']" class="ms-2 nav_icon" />
-                  <span class="nav_name">&nbsp;Overtime</span>
-                </a>
-                <a href="#" class="nav_link">
-                  <font-awesome-icon :icon="['fa-solid', 'cake-candles']" class="ms-2 nav_icon" />
-                  <span class="nav_name"> &nbsp;&nbsp;Holidays</span>
-                </a>
-                <a href="#" class="nav_link">
-                  <font-awesome-icon :icon="['fa-solid', 'user-group']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Users</span>
-                </a>
-                <a href="#" class="nav_link">
-                  <font-awesome-icon :icon="['fa-solid', 'user-gear']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Profile</span>
-                </a>
-              </div>
-            </div> 
-            <!-- <a href="#" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">SignOut</span> </a> -->
-        </nav>
-    </div>
+    <Header />
+    <SideNav />
     <!--Container Main start-->
-    <br/>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#" class="text-secondary">Maks</a></li>
-        <li class="breadcrumb-item"><a href="#" class="text-secondary">TAPAS</a></li>
-        <li class="breadcrumb-item text-secondary">Dashboard</li>
-      </ol>
-    </nav>
-
+    
     <div class="bg-main-div">
       <div class="row mb-3">
 

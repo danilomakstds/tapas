@@ -51,7 +51,7 @@ export default {
             this.calendarOptions.events = [];
         },
         getAllHolidays: function () {
-            axios.get(SettingsConstants.BASE_URL + '/getallholidays.REST.php', { crossdomain: true })
+            axios.get(SettingsConstants.BASE_URL + '/get-all-holidays.rest.php', { crossdomain: true })
                 .then(function (response) {
                     this.holidayEvents = JSON.parse(response.data[0].JSON).response.holidays
                     this.holidayEvents.forEach(function (event) {
@@ -68,7 +68,7 @@ export default {
                 }.bind(this));
         },
         getAllTimeInOut: function () {
-            axios.get(SettingsConstants.BASE_URL + '/getallTimeInOut.REST.php?userId=' + this.sessionData.id, { crossdomain: true })
+            axios.get(SettingsConstants.BASE_URL + '/get-time-in-out.rest.php?userId=' + this.sessionData.id, { crossdomain: true })
                 .then(function (response) {
                     response.data.forEach(function (e) {
                         var event = [];
