@@ -15,7 +15,8 @@ export default {
     name: 'Dashboard',
     computed: mapState([
         'isUserTimeIn',
-        'userTimeIn'
+        'userTimeIn',
+        'sessionData'
     ]),
     watch: {
     },
@@ -142,7 +143,7 @@ export default {
             }
             axios({
                 method: "post",
-                url: SettingsConstants.BASE_URL + "/postTimeInOut.REST.php?type=" + type,
+                url: SettingsConstants.BASE_URL + "/postTimeInOut.REST.php?type=" + type + "&userId=" + this.sessionData.id,
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data" },
             })
@@ -153,10 +154,17 @@ export default {
                 .catch(function (response) {
                     console.log(response);
                 });
+        },
+        logOutUser: function () {
+            store.commit('RESET_SESSION_DATA');
+            if (!this.sessionData) {
+                window.location.href = '/';
+            }
         }
     },
     mounted() {
         this.isOnDuty = this.isUserTimeIn;
+        console.log(this.sessionData);
         this.initSideNav();
-    },
+    }
 }

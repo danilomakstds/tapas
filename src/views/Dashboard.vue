@@ -14,7 +14,7 @@
             <div class="dropdown dropleft">
               <a role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <img src="../assets/images/avatar.jpg" class="rounded-circle" style="height:30px;"/>
-                <span class="ms-2">Danilo</span>
+                <span class="ms-2">{{sessionData.user_firstname}}</span>
                 <font-awesome-icon :icon="['fa', 'angle-down']" style="font-size: 10px" class="ms-2"/>
               </a>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -23,7 +23,7 @@
                 <a class="dropdown-item" href="#">
                   <font-awesome-icon :icon="['fa', 'wallet']" class="me-2"/> My Wallet</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="#" @click="logOutUser">
                   <font-awesome-icon :icon="['fa', 'arrow-right-from-bracket']" class="me-2"/> Logout</a>
               </div>
             </div>

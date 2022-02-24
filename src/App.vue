@@ -16,6 +16,9 @@ import "./components/scss/app.scss"
 export default {
     name: 'App',
     props: {
+    },
+    mounted: function () {
+      
     }
 }
 </script>

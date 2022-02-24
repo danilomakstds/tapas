@@ -13,7 +13,8 @@ import moment from 'moment'
 export default {
     name: 'Calendar',
     computed: mapState([
-        'fullCalendarProps'
+        'fullCalendarProps',
+        'sessionData'
     ]),
     props: {
         msg: String
@@ -67,7 +68,7 @@ export default {
                 }.bind(this));
         },
         getAllTimeInOut: function () {
-            axios.get(SettingsConstants.BASE_URL + '/getallTimeInOut.REST.php', { crossdomain: true })
+            axios.get(SettingsConstants.BASE_URL + '/getallTimeInOut.REST.php?userId=' + this.sessionData.id, { crossdomain: true })
                 .then(function (response) {
                     response.data.forEach(function (e) {
                         var event = [];

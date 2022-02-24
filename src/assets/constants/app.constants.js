@@ -11,8 +11,15 @@ const HOLIDAY_TYPE = {
 
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+const USERLEVEL = {
+    ADMIN: '2',
+    HR: '1',
+    USER: '0'
+}
+
 
 export default {
     HOLIDAY_TYPE: HOLIDAY_TYPE,
-    WEEKDAYS: WEEKDAYS
+    WEEKDAYS: WEEKDAYS,
+    USERLEVEL: USERLEVEL
 }

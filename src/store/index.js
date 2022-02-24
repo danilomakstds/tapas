@@ -5,7 +5,8 @@ export default createStore({
   state: {
     fullCalendarProps: {},
     isUserTimeIn: null,
-    userTimeIn: null
+    userTimeIn: null,
+    sessionData: null,
   },
   mutations: {
     SET_FULL_CALENDAR_PROPS: function (state, fullCalendarProps) {
@@ -26,6 +27,12 @@ export default createStore({
     RESET_USER_TIME_IN: function (state) {
       state.userTimeIn = false;
     },
+    SET_SESSION_DATA: function (state, sessionData) {
+      state.sessionData = sessionData;
+    },
+    RESET_SESSION_DATA: function (state) {
+      state.sessionData = null;
+    }
   },
   getters: {
 
