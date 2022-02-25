@@ -126,6 +126,9 @@ export default {
                 .catch(function (response) {
                     console.log(response);
                 });
+        },
+        updateIsOnDuty: function (onDuty) {
+            this.isOnDuty = onDuty
         }
     },
     mounted() {

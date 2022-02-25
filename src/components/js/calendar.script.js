@@ -70,20 +70,42 @@ export default {
         getAllTimeInOut: function () {
             axios.get(SettingsConstants.BASE_URL + '/get-time-in-out.rest.php?userId=' + this.sessionData.id, { crossdomain: true })
                 .then(function (response) {
-                    response.data.forEach(function (e) {
+                    response.data.forEach(function (e, index) {
                         var event = [];
-                        var start = moment(e.timein);
-                        var end = moment(e.timeout);
-                        var hours = end.diff(start, 'hours');
+                        var end, start, minutes;
+
+                        /* get Scheduled out */
+                        var reg = /\s\d\d:\d\d:\d\d\s/
+                        var scheduledOut = e.timeout.replace(reg, " " + this.sessionData.user_schedule_out + ":00 ");
+                        /* get Scheduled out */
+
+                        /* use scheduled out as timeout if user exceeds scheduled out */
+                        if ((new Date(scheduledOut)).getTime() < (new Date(e.timeout)).getTime()) {
+                            end = moment(scheduledOut);
+                        } else {
+                            end = moment(e.timeout);
+                        }
+                        /* use scheduled out as timeout if user exceeds scheduled out */
+
+                        start = moment(e.timein);
+                        minutes = end.diff(start, 'minutes');
                         event.start = start.format();
                         event.end = end.format();
-                        if (isNaN(hours)) {
+                        if (isNaN(minutes)) {
                             event.title = start.format('LT') + " - Time In";
                             event.backgroundColor = "#D1E7DD";
                             event.textColor = "#555";
+                            if (response.data.length - 1 == index) {
+                                store.commit('SET_IS_USER_TIME_IN', true);
+                                this.$emit('updateIsOnDuty', true);
+                            }
                         } else {
-                            event.title = hours - 1 + "h - Time In - Time Out";
+                            event.title = parseFloat((minutes - 60) / 60).toFixed(2) + "h : Time In - Time Out";
                             event.backgroundColor = "#5CB85C";
+                            if (response.data.length - 1 == index) {
+                                store.commit('SET_IS_USER_TIME_IN', false);
+                                this.$emit('updateIsOnDuty', false);
+                            }
                         }
                         event.allDay = true;
                         event.borderColor = "#5CB85C";
@@ -100,8 +122,5 @@ export default {
     },
     created() {
         this.emitFunctions();
-    },
-    mounted() {
-
     },
 }

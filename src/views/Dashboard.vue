@@ -11,7 +11,7 @@
         <div class="col-md-9 mt-3">
           <div class="card border-0">
             <div class="card-body card-calendar">
-              <Calendar ref="calendar"/>
+              <Calendar ref="calendar" @update-is-on-duty="updateIsOnDuty"/>
             </div>
           </div>
         </div>
@@ -29,25 +29,9 @@
               <br/>
             </div>
 
-            <div class="card-body mb-3" v-if="isOnDuty">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Time In</th>
-                    <th scope="col"></th>
-                    <th scope="col">Time Out</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row"><font-awesome-icon :icon="['fa', 'business-time']" class="me-2 text-secondary" /></th>
-                    <td>{{formatDigits(userTimeIn)}}</td>
-                    <th scope="row"><font-awesome-icon :icon="['fa', 'hourglass-end']" class="me-2 text-secondary" /></th>
-                    <td>{{formatDigits(projectedTimeOut(userTimeIn))}}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="card-body mb-3">
+              <h2 style="font-size: 17px;"><strong>My Schedule</strong></h2>
+              
             </div>
 
             <div class="card-body">
