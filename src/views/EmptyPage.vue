@@ -1,5 +1,5 @@
 <template>
-    <div class="users text-start" id="body-pd">
+    <div class="text-start" id="body-pd">
     <Header />
     <SideNav />
 

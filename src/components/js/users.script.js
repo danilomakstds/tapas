@@ -29,7 +29,7 @@ export default {
     },
     methods: {
         initUsers: function () {
-            axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php', { crossdomain: true })
+            axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php?type=all', { crossdomain: true })
                 .then(function (response) {
                     this.userData = response.data;
                 }.bind(this));

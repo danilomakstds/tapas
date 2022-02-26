@@ -85,6 +85,7 @@ export default {
                         } else {
                             end = moment(e.timeout);
                         }
+                        end = moment(e.timeout);
                         /* use scheduled out as timeout if user exceeds scheduled out */
 
                         start = moment(e.timein);
@@ -100,7 +101,7 @@ export default {
                                 this.$emit('updateIsOnDuty', true);
                             }
                         } else {
-                            event.title = parseFloat((minutes - 60) / 60).toFixed(2) + "h : Time In - Time Out";
+                            event.title = parseFloat((minutes - 60) / 60).toFixed(1) + "h Time In - Time Out";
                             event.backgroundColor = "#5CB85C";
                             if (response.data.length - 1 == index) {
                                 store.commit('SET_IS_USER_TIME_IN', false);

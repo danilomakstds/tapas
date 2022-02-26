@@ -16,9 +16,9 @@
                   <font-awesome-icon :icon="['fa', 'money-check-dollar']" class="ms-2 nav_icon" />
                   <span class="nav_name">Payslips</span>
                 </a>
-                <a href="#" class="nav_link" id="leave-link">
+                <a href="/request" class="nav_link" id="request-link">
                   <font-awesome-icon :icon="['fa-solid', 'mug-hot']" class="ms-2 nav_icon" />
-                  <span class="nav_name">&nbsp;Leave</span>
+                  <span class="nav_name">&nbsp;Request</span>
                 </a>
                 <a href="#" class="nav_link" id="overtime-link">
                   <font-awesome-icon :icon="['fa-solid', 'clock-four']" class="ms-2 nav_icon" />
