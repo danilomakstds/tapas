@@ -52,6 +52,7 @@ export default {
     methods: {
         logOutUser: function () {
             store.commit('RESET_SESSION_DATA');
+            store.commit('RESET_LAST_SELECTED_VIEW');
             if (!this.sessionData) {
                 window.location.href = '/';
             }

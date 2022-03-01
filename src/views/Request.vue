@@ -11,15 +11,15 @@
 
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="timeedit-tab" data-bs-toggle="tab" data-bs-target="#timeedit" type="button" role="tab" aria-controls="timeedit" aria-selected="true">
+                  <button class="nav-link active" id="timeedit-tab" @click="selectTab" data-bs-toggle="tab" data-bs-target="#timeedit" type="button" role="tab" aria-controls="timeedit" aria-selected="true">
                     Time Edit Request</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="leave-tab" data-bs-toggle="tab" data-bs-target="#leave" type="button" role="tab" aria-controls="leave" aria-selected="false">
+                  <button class="nav-link" id="leave-tab" @click="selectTab" data-bs-toggle="tab" data-bs-target="#leave" type="button" role="tab" aria-controls="leave" aria-selected="false">
                     Leave Request</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="overtime-tab" data-bs-toggle="tab" data-bs-target="#overtime" type="button" role="tab" aria-controls="overtime" aria-selected="false">
+                  <button class="nav-link" id="overtime-tab" @click="selectTab" data-bs-toggle="tab" data-bs-target="#overtime" type="button" role="tab" aria-controls="overtime" aria-selected="false">
                     Overtime Request</button>
                 </li>
             </ul>
@@ -59,6 +59,7 @@
                           <th scope="col">Hours</th>
                           <th scope="col">Leave Type</th>
                           <th scope="col">Comments</th>
+                          <th scope="col">Status</th>
                           <th scope="col">Actions</th>
                         </tr>
                       </thead>
@@ -78,7 +79,20 @@
                             {{leave.leavetype }}
                             </span>
                           </td>
-                          <td>{{leave.comment}}</td>
+                          <td>{{leave.comment}}
+                          <span v-if="leave.approver_comment" class="fst-italic">
+                            <hr />
+                            <font-awesome-icon :icon="['fa', 'comment']" /> <b>Admin</b>: {{leave.approver_comment}}
+                          </span>
+                          </td>
+                          <td>
+                            <span class="badge rounded-pill"
+                            v-bind:class="{ 'bg-secondary': (leave.approval_status == constantsApprovalStatus.PENDING),
+                            'bg-success': (leave.approval_status == constantsApprovalStatus.APPROVED),
+                            'bg-danger': (leave.approval_status == constantsApprovalStatus.REJECTED) }">
+                              {{leave.status}}
+                            </span>
+                          </td>
                           <td>
                             <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled">
                               <font-awesome-icon :icon="['fa', 'pen']" />
@@ -86,10 +100,16 @@
                             <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled">
                               <font-awesome-icon :icon="['fa', 'trash-can']" />
                             </button>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.user_level < 2">
+                            <button type="button" class="btn btn-primary btn-sm me-2"
+                            :disabled="(this.sessionData.user_level < 2 ||
+                            (this.sessionData.user_level == 2 && leave.userId == this.sessionData.id))"
+                            @click="approveLeave(leave.id)">
                               <font-awesome-icon :icon="['fa', 'check']" />
                             </button>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.user_level < 2">
+                            <button type="button" class="btn btn-primary btn-sm me-2"
+                            :disabled="(this.sessionData.user_level < 2 ||
+                            (this.sessionData.user_level == 2 && leave.userId == this.sessionData.id))"
+                            @click="openRejectLeaveModal(leave)">
                               <font-awesome-icon :icon="['fa', 'ban']" />
                             </button>
                           </td>
@@ -195,7 +215,7 @@
 
 
           <!-- Add OT Request Modal -->
-        <form @submit="addLeaveRequest">
+        <form @submit="addOTRequest">
           <div class="modal fade ot-request" id="addOTModal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
               <div class="modal-content">
@@ -215,6 +235,32 @@
           </div>
         </form>
           <!-- Add OT Request Modal END -->
+
+
+        <!--Reject Leave Request Modal -->
+        <form @submit="rejectLeave">
+          <div class="modal fade rejectleave-request" id="rejectLeaveModal" >
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalToggleLabel2">Add Leave Comments</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="font-size:12px">
+                  <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Add Comments</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="selectedLeaveDetails.approver_comment"></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-danger" type="submit">Save and Reject</button>
+                  <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+                </div> 
+              </div>
+            </div>
+          </div>
+        </form>
+          <!--Reject Leave Request Modal END -->
 
     
     </div>

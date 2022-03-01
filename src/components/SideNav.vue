@@ -20,15 +20,11 @@
                   <font-awesome-icon :icon="['fa-solid', 'mug-hot']" class="ms-2 nav_icon" />
                   <span class="nav_name">&nbsp;Request</span>
                 </a>
-                <a href="#" class="nav_link" id="overtime-link">
-                  <font-awesome-icon :icon="['fa-solid', 'clock-four']" class="ms-2 nav_icon" />
-                  <span class="nav_name">&nbsp;Overtime</span>
-                </a>
-                <a href="#" class="nav_link" id="holidays-link">
+                <a href="#" class="nav_link" id="holidays-link" v-if="sessionData.user_level > 1">
                   <font-awesome-icon :icon="['fa-solid', 'cake-candles']" class="ms-2 nav_icon" />
                   <span class="nav_name"> &nbsp;&nbsp;Holidays</span>
                 </a>
-                <a href="/users" class="nav_link" id="users-link">
+                <a href="/users" class="nav_link" id="users-link" v-if="sessionData.user_level > 1">
                   <font-awesome-icon :icon="['fa-solid', 'user-group']" class="ms-2 nav_icon" />
                   <span class="nav_name">Users</span>
                 </a>
@@ -59,8 +55,7 @@ import { mapState } from 'vuex'
 export default {
     name: 'SideNav',
     computed: mapState([
-        'sessionData',
-        'lastSelectedView'
+        'sessionData'
     ]),
     methods: {
         initSideNav: function () {
