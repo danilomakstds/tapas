@@ -26,6 +26,9 @@
             <div class="tab-content p-3" id="myTabContent">
                 <div class="tab-pane fade show active" id="timeedit" role="tabpanel" aria-labelledby="timeedit-tab">
                   <!-- Time Edit Start-->
+                   <button type="button" class="btn btn-primary btn-sm float-end">
+                    <font-awesome-icon :icon="['fa', 'plus']" /> Add Time Edit Request
+                  </button>
                   <table class="table">
                     <thead>
                       <tr>
