@@ -44,14 +44,15 @@ export default {
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then(function (response) {
-
-                    if (response.data[0].user_email) {
+                    if (response.data) {
+                        this.showMessage = true;
                         this.message = "<strong>Success! </strong>";
                         this.messageType = "alert-success";
                         //start session
                         store.commit('SET_SESSION_DATA', response.data[0]);
                         if (this.sessionData) {
                             window.location.href = '/dashboard';
+                            //this.$router.push('/dashboard');
                         }
                     } else {
                         this.showMessage = true;

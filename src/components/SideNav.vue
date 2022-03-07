@@ -8,30 +8,40 @@
                 </span>
               </a>
               <div class="nav_list">
-                <a href="/dashboard" class="nav_link" id="dashboard-link">
-                  <font-awesome-icon :icon="['fa', 'chart-line']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Dashboard</span>
-                </a>
-                <a href="#" class="nav_link" id="payslip-link">
-                  <font-awesome-icon :icon="['fa', 'money-check-dollar']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Payslips</span>
-                </a>
-                <a href="/request" class="nav_link" id="request-link">
-                  <font-awesome-icon :icon="['fa-solid', 'mug-hot']" class="ms-2 nav_icon" />
-                  <span class="nav_name">&nbsp;Request</span>
-                </a>
+                <router-link to="/dashboard">
+                  <a href="#" class="nav_link" id="dashboard-link">
+                    <font-awesome-icon :icon="['fa', 'chart-line']" class="ms-2 nav_icon" />
+                    <span class="nav_name">Dashboard</span>
+                  </a>
+                </router-link>
+                <router-link to="/payslips">
+                  <a href="#" class="nav_link" id="payslip-link">
+                    <font-awesome-icon :icon="['fa', 'money-check-dollar']" class="ms-2 nav_icon" />
+                    <span class="nav_name">Payslips</span>
+                  </a>
+                </router-link>
+                <router-link to="/request">
+                  <a href="#" class="nav_link" id="request-link">
+                    <font-awesome-icon :icon="['fa-solid', 'mug-hot']" class="ms-2 nav_icon" />
+                    <span class="nav_name">&nbsp;Request</span>
+                  </a>
+                </router-link>
                 <a href="#" class="nav_link" id="holidays-link" v-if="sessionData.user_level > 1">
                   <font-awesome-icon :icon="['fa-solid', 'cake-candles']" class="ms-2 nav_icon" />
                   <span class="nav_name"> &nbsp;&nbsp;Holidays</span>
                 </a>
-                <a href="/users" class="nav_link" id="users-link" v-if="sessionData.user_level > 1">
-                  <font-awesome-icon :icon="['fa-solid', 'user-group']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Users</span>
-                </a>
-                <a href="#" class="nav_link" id="profile-link">
-                  <font-awesome-icon :icon="['fa-solid', 'user-gear']" class="ms-2 nav_icon" />
-                  <span class="nav_name">Profile</span>
-                </a>
+                <router-link to="/users">
+                  <a href="#" class="nav_link" id="users-link" v-if="sessionData.user_level > 1">
+                    <font-awesome-icon :icon="['fa-solid', 'user-group']" class="ms-2 nav_icon" />
+                    <span class="nav_name">Users</span>
+                  </a>
+                </router-link>
+                <router-link to="/profile">
+                  <a href="#" class="nav_link" id="profile-link">
+                    <font-awesome-icon :icon="['fa-solid', 'user-gear']" class="ms-2 nav_icon" />
+                    <span class="nav_name">Profile</span>
+                  </a>
+                </router-link>
               </div>
             </div> 
             <!-- <a href="#" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">SignOut</span> </a> -->

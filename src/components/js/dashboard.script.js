@@ -20,7 +20,8 @@ export default {
     computed: mapState([
         'isUserTimeIn',
         'userTimeIn',
-        'sessionData'
+        'sessionData',
+        'noTimeOutID'
     ]),
     watch: {
     },
@@ -55,7 +56,7 @@ export default {
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#6C757D',
                 confirmButtonText: 'Yes, continue!'
-            }).then((result) => {
+            }).then(function (result) {
                 if (result.isConfirmed) {
                     this.isOnDuty = true;
                     store.commit('SET_USER_TIME_IN', today);
@@ -67,7 +68,7 @@ export default {
                         'success'
                     );
                 }
-            });
+            }.bind(this));
         },
         setTimeOut: function () {
             var timeOut = new Date();
@@ -78,7 +79,7 @@ export default {
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#6C757D',
                 confirmButtonText: 'Yes, continue!'
-            }).then((result) => {
+            }).then(function (result) {
                 if (result.isConfirmed) {
                     this.isOnDuty = false;
                     this.timeOut = timeOut;
@@ -91,7 +92,7 @@ export default {
                     );
 
                 }
-            });
+            }.bind(this));
         },
         formatDigits: function (date) {
             var time = new Date(date);
@@ -110,8 +111,11 @@ export default {
         saveTimeInOut: function (date, type) {
             var bodyFormData = new FormData();
             bodyFormData.append(type, date);
+            bodyFormData.append('projected_timeout', this.sessionData.user_schedule_out);
+            bodyFormData.append('projected_timein', this.sessionData.user_schedule_in);
             if (type == 'timeout') {
                 bodyFormData.append('timein', this.userTimeIn);
+                bodyFormData.append('noTimeOutID', this.noTimeOutID);
             }
             axios({
                 method: "post",

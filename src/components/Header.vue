@@ -54,7 +54,7 @@ export default {
             store.commit('RESET_SESSION_DATA');
             store.commit('RESET_LAST_SELECTED_VIEW');
             if (!this.sessionData) {
-                window.location.href = '/';
+                this.$router.push('/login');
             }
         }
     },

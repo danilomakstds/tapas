@@ -29,18 +29,49 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col" style="width:40px"></th>
+                        <th scope="col" v-if="this.sessionData.user_level > 1"></th>
                         <th scope="col">Date</th>
                         <th scope="col">Time Modification</th>
+                        <th scope="col">Comments</th>
                         <th scope="col">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                      <tr v-for="timedata in timeinoutRequestData" :key="timedata.id">
+                        <td v-if="this.sessionData.user_level > 1">
+                           <img :src="timedata.avatar" style="height:30px; width:30px" class="rounded-circle me-2" />
+                            {{timedata.username}}
+                        </td>
+                        <td>
+                          {{timedata.getDate}}
+                        </td>
+                        <td>
+                          from <span class="badge bg-primary">{{timedata.otimeinFormat}} - {{timedata.otimeoutFormat}}</span> → to
+                          <span class="badge bg-success">{{timedata.new_timein}} - {{timedata.new_timeout}}</span> 
+                        </td>
+                        <td>{{timedata.comment}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != timedata.userId ? '' : disabled"
+                            >
+                              <font-awesome-icon :icon="['fa', 'pen']" />
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != timedata.userId ? '' : disabled"
+                            >
+                              <font-awesome-icon :icon="['fa', 'trash-can']" />
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm me-2"
+                            :disabled="(this.sessionData.user_level < 2 ||
+                            (this.sessionData.user_level == 2 && timedata.userId == this.sessionData.id))"
+                            @click="approveTimeEdit(timedata)">
+                              <font-awesome-icon :icon="['fa', 'check']" />
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm me-2"
+                            :disabled="(this.sessionData.user_level < 2 ||
+                            (this.sessionData.user_level == 2 && timedata.userId == this.sessionData.id))"
+                            >
+                              <font-awesome-icon :icon="['fa', 'ban']" />
+                            </button>
+                          </td>
                       </tr>
                     </tbody>
                   </table>
@@ -75,7 +106,9 @@
                           </td>
                           <td>{{leave.totalhours}}</td>
                           <td>
-                            <span class="badge rounded-pill" v-bind:class="{ 'bg-primary': (leave.leave_type == 2), 'bg-warning': (leave.leave_type == 1) }">
+                            <span class="badge rounded-pill"
+                            v-bind:class="{ 'bg-primary': (leave.leave_type == 2), 'bg-warning': (leave.leave_type == 1),
+                            'bg-danger': (leave.leave_type == 3), 'bg-maternity': (leave.leave_type == 4), 'bg-info': (leave.leave_type == 5) }">
                             {{leave.leavetype }}
                             </span>
                           </td>
@@ -94,10 +127,12 @@
                             </span>
                           </td>
                           <td>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled">
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled"
+                            @click="showEditLeaveModal(leave)">
                               <font-awesome-icon :icon="['fa', 'pen']" />
                             </button>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled">
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled"
+                            @click="deleteLeaveRequest(leave.id)">
                               <font-awesome-icon :icon="['fa', 'trash-can']" />
                             </button>
                             <button type="button" class="btn btn-primary btn-sm me-2"
@@ -162,15 +197,25 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="font-size:12px">
-                  <label class="form-label">Remaining <b>VL</b> hours </label>
+                  <span>Remaining hours</span><br/><br/>
+                  <label class="form-label"> <b>Vacation</b> </label>
                   <span class="badge bg-primary ms-2 me-2" style="font-size: 13px">120 hours</span>
-                   <label class="form-label">Remaining <b>SL</b> hours </label>
-                  <span class="badge bg-warning ms-2" style="font-size: 13px">120 hours</span>
-                  <br/><br/>
+                   <label class="form-label"> <b>Sick</b> </label>
+                  <span class="badge bg-warning ms-2 me-2" style="font-size: 13px">80 hours</span>
+                  <label class="form-label"> <b>Birthday</b> </label>
+                  <span class="badge bg-info ms-2 me-2" style="font-size: 13px">8 hours</span>
+                  <label class="form-label"> <b>Emergency</b> </label>
+                  <span class="badge bg-danger ms-2 me-2" style="font-size: 13px">100 hours</span>
+                  <label class="form-label"> <b>Maternity</b> </label>
+                  <span class="badge bg-maternity ms-2" style="font-size: 13px">120 hours</span>
+                  <hr/>
                   <label class="form-label">Select Leave Type</label>
                   <select class="form-select form-select-md mt-2" v-model="leaveKey" name="leavetype">
                     <option value="1">Sick Leave</option>
                     <option value="2">Vacation Leave</option>
+                    <option value="3">Emergency Leave</option>
+                    <option value="4">Maternity Leave</option>
+                    <option value="5">Birthday Leave</option>
                   </select>
                   <table class="w-100 mt-2" v-if="leaveKey">
                     <tr>
@@ -211,6 +256,78 @@
           </div>
         </form>
           <!-- Add Leave Request Modal END -->
+
+
+
+        <!-- Edit Leave Request Modal -->
+        <form @submit="editLeaveRequest">
+          <div class="modal fade leave-request" id="editleaveModal">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalToggleLabel2">Add Leave Request</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="font-size:12px">
+                  <span>Remaining hours</span><br/><br/>
+                  <label class="form-label"> <b>Vacation</b> </label>
+                  <span class="badge bg-primary ms-2 me-2" style="font-size: 13px">120 hours</span>
+                   <label class="form-label"> <b>Sick</b> </label>
+                  <span class="badge bg-warning ms-2 me-2" style="font-size: 13px">80 hours</span>
+                  <label class="form-label"> <b>Birthday</b> </label>
+                  <span class="badge bg-info ms-2 me-2" style="font-size: 13px">8 hours</span>
+                  <label class="form-label"> <b>Emergency</b> </label>
+                  <span class="badge bg-danger ms-2 me-2" style="font-size: 13px">100 hours</span>
+                  <label class="form-label"> <b>Maternity</b> </label>
+                  <span class="badge bg-maternity ms-2" style="font-size: 13px">120 hours</span>
+                  <hr/>
+                  <label class="form-label">Select Leave Type</label>
+                  <select class="form-select form-select-md mt-2" v-model="editLeave.leave_type" name="leavetype">
+                    <option value="1">Sick Leave</option>
+                    <option value="2">Vacation Leave</option>
+                    <option value="3">Emergency Leave</option>
+                    <option value="4">Maternity Leave</option>
+                    <option value="5">Birthday Leave</option>
+                  </select>
+                  <table class="w-100 mt-2" v-if="editLeave.leave_type">
+                    <tr>
+                      <td>
+                        <label class="form-label">Date</label>
+                        <input class="form-control form-control-md" type="date" v-model="editLeave.editDate" name="leavedatestart">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="form-check mt-3" style="font-size:13px">
+                          <input class="form-check-input" type="checkbox" id="flexCheckDefault" v-model="isFullDay">
+                          <label class="form-check-label ms-2 mt-1" for="flexCheckDefault" >
+                            Is full day
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr v-if="!isFullDay">
+                      <td>
+                         <label class="form-label">Leave hours</label>
+                         <input class="form-control form-control-md" type="number" placeholder="" min="4" max="8" required v-model="editLeave.totalhours" name="leavehours">
+                      </td>
+                    </tr>
+                    <div class="mb-3 mt-2">
+                      <label for="exampleFormControlTextarea1" class="form-label" style="font-size:13px">Comments</label>
+                      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Add leave comments here" v-model="editLeave.comment" name="leavecomments"></textarea>
+                    </div>
+                  </table>
+                  <br/>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" type="submit">Save</button>
+                  <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+                </div> 
+              </div>
+            </div>
+          </div>
+        </form>
+          <!-- Edit Leave Request Modal END -->
 
 
 
