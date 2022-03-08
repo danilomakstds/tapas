@@ -44,7 +44,7 @@ export default {
                     this.selectedEvent = info.event;
                     setTimeout(function () {
                         this.selectedEvent.envStart = moment(info.event._def.extendedProps.evntStart).format('LLL');
-                        this.selectedEvent.envEnd = moment(info.event._def.extendedProps.evntEnd).format('LLL');
+                        this.selectedEvent.envEnd = moment(info.event._def.extendedProps.realTimeOut).format('LLL');
                         this.editTimeIn = moment(info.event._def.extendedProps.evntStart).format("HH:mm");
                         this.viewEventModal = new Modal(document.getElementById('viewEventModal'));
                         this.viewEventModal.toggle();
@@ -162,6 +162,7 @@ export default {
                             /* use scheduled out as timeout if user exceeds scheduled out */
 
                             start = moment(e.timein);
+                            event.realTimeOut = moment(e.timeout).format()
                             event.start = start.format();
                             event.evntStart = start.format();
                             if (e.timeout) {

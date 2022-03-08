@@ -87,7 +87,7 @@ export default {
                     this.saveTimeInOut(timeOut, 'timeout');
                     Swal.fire(
                         'Success!',
-                        'You are now on duty.',
+                        'You are off duty.',
                         'success'
                     );
 
