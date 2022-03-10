@@ -46,6 +46,7 @@ export default {
                         this.selectedEvent.envStart = moment(info.event._def.extendedProps.evntStart).format('LLL');
                         this.selectedEvent.envEnd = moment(info.event._def.extendedProps.realTimeOut).format('LLL');
                         this.editTimeIn = moment(info.event._def.extendedProps.evntStart).format("HH:mm");
+                        this.editTimeOut = moment(info.event._def.extendedProps.realTimeOut).format("HH:mm");
                         this.viewEventModal = new Modal(document.getElementById('viewEventModal'));
                         this.viewEventModal.toggle();
                         console.log(info.event);
@@ -139,7 +140,7 @@ export default {
                         this.$emit('updateIsOnDuty', false);
                         response.data.forEach(function (e) {
                             var event = [];
-                            var end, start, minutes;
+                            var end, start, minutes, sheduledOut, ot;
 
                             /* get Scheduled out */
                             var reg = /\s\d\d:\d\d:\d\d\s/
@@ -149,16 +150,12 @@ export default {
                                     /* get Scheduled out */
                                     /* use scheduled out as timeout if user exceeds scheduled out */
                                     if ((new Date(scheduledOut)).getTime() < (new Date(e.timeout)).getTime()) {
-                                        end = moment(scheduledOut);
-                                    } else {
-                                        end = moment(e.timeout);
+                                        ot = moment(e.timeout).diff(moment(scheduledOut), 'minutes');
+                                        console.log(ot);
+                                        //sheduledOut = moment(scheduledOut);
                                     }
-                                } else {
-                                    end = moment(e.timeout);
                                 }
                             }
-
-
                             /* use scheduled out as timeout if user exceeds scheduled out */
 
                             start = moment(e.timein);
@@ -166,7 +163,14 @@ export default {
                             event.start = start.format();
                             event.evntStart = start.format();
                             if (e.timeout) {
-                                minutes = end.diff(start, 'minutes');
+                                sheduledOut = moment(scheduledOut);
+                                end = moment(e.timeout);
+                                if (ot) {
+                                    minutes = (sheduledOut.diff(start, 'minutes') >= 525 || sheduledOut.diff(start, 'minutes') <= 540) ? 540 : sheduledOut.diff(start, 'minutes');
+                                    minutes = minutes + ot;
+                                } else {
+                                    minutes = (end.diff(start, 'minutes') >= 525 || end.diff(start, 'minutes') <= 540) ? 540 : end.diff(start, 'minutes');
+                                }
                                 event.end = end.format();
                                 event.evntEnd = end.format();
                                 event.evntId = e.id;
@@ -180,7 +184,7 @@ export default {
                                 store.commit('SET_IS_USER_TIME_IN', true);
                                 this.$emit('updateIsOnDuty', true);
                             } else {
-                                event.title = parseFloat((minutes - 60) / 60).toFixed(1) + "h Time In - Time Out";
+                                event.title = parseFloat((minutes - 60) / 60).toFixed(2) + "h Time In - Time Out";
                                 event.realTitle = "Time In - Time Out";
                                 event.backgroundColor = "#5CB85C";
                             }
