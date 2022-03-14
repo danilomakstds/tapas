@@ -43,10 +43,18 @@ export default {
                     this.selectedEvent = [];
                     this.selectedEvent = info.event;
                     setTimeout(function () {
+                        this.editTimeInOutMode = false;
+                        this.addOTRequestMode = false;
+                        if (info.event._def.extendedProps.otMinutes) {
+                            this.sliderValue = info.event._def.extendedProps.otMinutes;
+                        } else {
+                            this.sliderValue = null;
+                        }
                         this.selectedEvent.envStart = moment(info.event._def.extendedProps.evntStart).format('LLL');
                         this.selectedEvent.envEnd = moment(info.event._def.extendedProps.realTimeOut).format('LLL');
                         this.editTimeIn = moment(info.event._def.extendedProps.evntStart).format("HH:mm");
                         this.editTimeOut = moment(info.event._def.extendedProps.realTimeOut).format("HH:mm");
+                        this.checkIfOtCreated(info.event._def.extendedProps.evntStart);
                         this.viewEventModal = new Modal(document.getElementById('viewEventModal'));
                         this.viewEventModal.toggle();
                         console.log(info.event);
@@ -61,7 +69,9 @@ export default {
             editTimeIn: null,
             editTimeOut: null,
             timeEditComment: null,
-            userBasicDetails: []
+            userBasicDetails: [],
+            sliderValue: null,
+            isOTCreated: false,
         }
     },
     methods: {
@@ -75,6 +85,44 @@ export default {
             } else {
                 this.editTimeInOutMode = true;
             }
+        },
+        addOTRequest: function (otEvent, value) {
+            Swal.fire({
+                title: 'OT request',
+                text: 'Create overtime request for ' + value + ' minutes?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#6C757D',
+                confirmButtonText: 'Yes, create it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var bodyFormData = new FormData();
+                    bodyFormData.append('date_id', otEvent._def.extendedProps.evntId);
+                    bodyFormData.append('minutes', value);
+                    bodyFormData.append('date', otEvent._def.extendedProps.evntStart);
+                    axios({
+                        method: "post",
+                        url: SettingsConstants.BASE_URL + "/overtime.rest.php?type=add&userId=" + this.sessionData.id,
+                        data: bodyFormData,
+                        headers: { "Content-Type": "multipart/form-data" },
+                    })
+                        .then(function (response) {
+                            if (response.data) {
+                                this.viewEventModal.toggle();
+                                Swal.fire(
+                                    'Created!',
+                                    'OT request has been created.',
+                                    'success'
+                                )
+                            }
+                            console.log(response);
+                        }.bind(this))
+                        .catch(function (response) {
+                            console.log(response);
+                        });
+                }
+            })
         },
         submitTimeInOutRequest: function (event) {
             event.preventDefault();
@@ -140,7 +188,7 @@ export default {
                         this.$emit('updateIsOnDuty', false);
                         response.data.forEach(function (e) {
                             var event = [];
-                            var end, start, minutes, sheduledOut, ot;
+                            var end, start, minutes, sheduledOut, scheduledIn, ot;
 
                             /* get Scheduled out */
                             var reg = /\s\d\d:\d\d:\d\d\s/
@@ -151,25 +199,35 @@ export default {
                                     /* use scheduled out as timeout if user exceeds scheduled out */
                                     if ((new Date(scheduledOut)).getTime() < (new Date(e.timeout)).getTime()) {
                                         ot = moment(e.timeout).diff(moment(scheduledOut), 'minutes');
-                                        console.log(ot);
-                                        //sheduledOut = moment(scheduledOut);
+                                        //console.log(ot);
                                     }
                                 }
                             }
-                            /* use scheduled out as timeout if user exceeds scheduled out */
 
-                            start = moment(e.timein);
+
+                            /* use scheduled out as timeout if user exceeds scheduled out */
+                            scheduledIn = e.timein.replace(reg, " " + e.projected_timein + ":00 ");
+                            if ((new Date(e.timein)).getTime() > (new Date(scheduledIn)).getTime()) {
+                                var diff = moment(e.timein).diff(moment(scheduledIn), 'minutes');
+                                if (diff < 15) { //if less than 15 minutes
+                                    start = moment(scheduledIn);
+                                } else {
+                                    start = moment(e.timein);
+                                }
+                            } else {
+                                start = moment(e.timein);
+                            }
+
                             event.realTimeOut = moment(e.timeout).format()
                             event.start = start.format();
                             event.evntStart = start.format();
                             if (e.timeout) {
                                 sheduledOut = moment(scheduledOut);
                                 end = moment(e.timeout);
+                                minutes = sheduledOut.diff(start, 'minutes');
+                                minutes = minutes + (ot ? ot : 0);
                                 if (ot) {
-                                    minutes = (sheduledOut.diff(start, 'minutes') >= 525 || sheduledOut.diff(start, 'minutes') <= 540) ? 540 : sheduledOut.diff(start, 'minutes');
-                                    minutes = minutes + ot;
-                                } else {
-                                    minutes = (end.diff(start, 'minutes') >= 525 || end.diff(start, 'minutes') <= 540) ? 540 : end.diff(start, 'minutes');
+                                    event.otMinutes = ot;
                                 }
                                 event.end = end.format();
                                 event.evntEnd = end.format();
@@ -308,10 +366,22 @@ export default {
                     }
                 }.bind(this));
         },
+        checkIfOtCreated: function (date) {
+            axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=get-item-bydate&userId=' + this.sessionData.id + '&date=' + date, { crossdomain: true })
+                .then(function (response) {
+                    if (response.data) {
+                        this.isOTCreated = true;
+                    } else {
+                        this.isOTCreated = false;
+                    }
+                }.bind(this));
+        },
         getAllUserBasicDetails: function () {
             axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php?type=all-user', { crossdomain: true })
                 .then(function (response) {
-                    this.userBasicDetails = response;
+                    if (response.data) {
+                        this.userBasicDetails = response;
+                    }
                 }.bind(this));
         },
         emitFunctions: function () {

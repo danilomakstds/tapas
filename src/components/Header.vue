@@ -63,3 +63,16 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+  .badge-pill {
+    border-radius: 75px;
+    top: 0;
+    right: -5px;
+    position: absolute;
+  }
+
+  .badge-danger {
+    background-color: #F46A6A !important;
+  }
+</style>

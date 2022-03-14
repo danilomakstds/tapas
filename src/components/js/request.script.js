@@ -27,13 +27,15 @@ export default {
             leaveComments: null,
             leaveRequestData: [],
             timeinoutRequestData: [],
+            otRequestData: [],
             constantsApprovalStatus: [],
             selectedLeaveDetails: [],
             selectedTimeEditDetails: [],
             editLeave: [],
             addLeaveModal: null,
             editLeaveModal: null,
-            addOTModal: null
+            addOTModal: null,
+            userRemainingLeaves: []
         }
     },
     components: {
@@ -44,12 +46,23 @@ export default {
     },
     methods: {
         showAddLeaveModal: function () {
+            this.getRemainingLeaves(this.sessionData.id);
             this.addLeaveModal = new Modal(document.getElementById('addleaveModal'));
             this.addLeaveModal.toggle();
         },
         showOTModal: function () {
             this.addOTModal = new Modal(document.getElementById('addOTModal'));
             this.addOTModal.toggle();
+        },
+        getRemainingLeaves: function (userId) {
+            this.userRemainingLeaves = [];
+            axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php?type=get-remaining-leaves&userId=' + userId, { crossdomain: true })
+                .then(function (response) {
+                    if (response.data) {
+                        this.userRemainingLeaves = response.data[0];
+                        console.log(this.userRemainingLeaves);
+                    }
+                }.bind(this));
         },
         addLeaveRequest: function (event) {
             event.preventDefault();
@@ -231,10 +244,18 @@ export default {
                                     timeEdit.getDate = moment(timeEdit.oldTimeIn).format('LL');
                                     timeEdit.otimeinFormat = moment(timeEdit.oldTimeIn).format('HH:mm');
                                     timeEdit.otimeoutFormat = moment(timeEdit.oldTimeOut).format('HH:mm');
-                                    // timeEdit.ntimeinFormat = timeEdit.new_timein;
-                                    // timeEdit.ntimeoutFormat = timeEdit.new_timeout;
+                                    switch (timeEdit.approval_status) {
+                                        case Constants.LEAVE_APPROVAL_STATUS.PENDING:
+                                            timeEdit.status = 'Pending';
+                                            break;
+                                        case Constants.LEAVE_APPROVAL_STATUS.APPROVED:
+                                            timeEdit.status = 'Approved';
+                                            break;
+                                        case Constants.LEAVE_APPROVAL_STATUS.REJECTED:
+                                            timeEdit.status = 'Rejected';
+                                            break;
+                                    }
                                 }.bind(timeEdit));
-                            console.log(timeEdit);
                         });
                     } else {
                         this.timeinoutRequestData = [];
@@ -242,6 +263,73 @@ export default {
                 }.bind(this));
         },
         getUserTimeEditRequest: function () {
+            axios.get(SettingsConstants.BASE_URL + '/get-time-in-out.rest.php?type=gettimeedit_byuserid&userId=' + this.sessionData.id, { crossdomain: true })
+                .then(function (response) {
+                    if (response.data) {
+                        this.timeinoutRequestData = response.data;
+                        this.timeinoutRequestData.forEach(function (timeEdit) {
+                            axios.get(SettingsConstants.BASE_URL + '/get-time-in-out.rest.php?type=gettimeinout_byid&timeId=' + timeEdit.timein_id, { crossdomain: true })
+                                .then(function (response) {
+                                    var timedata = response.data[0];
+                                    var reg = /\s\d\d:\d\d:\d\d\s/;
+                                    timeEdit.oldTimeIn = timedata.timein;
+                                    timeEdit.oldTimeOut = timedata.timeout;
+                                    timeEdit.newTimeIn = timeEdit.oldTimeIn.replace(reg, " " + timeEdit.new_timein + ":00 ");
+                                    timeEdit.newTimeOut = timeEdit.oldTimeOut.replace(reg, " " + timeEdit.new_timeout + ":00 ");
+                                    timeEdit.getDate = moment(timeEdit.oldTimeIn).format('LL');
+                                    timeEdit.otimeinFormat = moment(timeEdit.oldTimeIn).format('HH:mm');
+                                    timeEdit.otimeoutFormat = moment(timeEdit.oldTimeOut).format('HH:mm');
+                                    switch (timeEdit.approval_status) {
+                                        case Constants.LEAVE_APPROVAL_STATUS.PENDING:
+                                            timeEdit.status = 'Pending';
+                                            break;
+                                        case Constants.LEAVE_APPROVAL_STATUS.APPROVED:
+                                            timeEdit.status = 'Approved';
+                                            break;
+                                        case Constants.LEAVE_APPROVAL_STATUS.REJECTED:
+                                            timeEdit.status = 'Rejected';
+                                            break;
+                                    }
+                                }.bind(timeEdit));
+                        });
+                    } else {
+                        this.timeinoutRequestData = [];
+                    }
+                }.bind(this));
+        },
+        getAllOTRequest: function () {
+            axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=getall', { crossdomain: true })
+                .then(function (response) {
+                    if (response) {
+                        this.otRequestData = response.data;
+                        this.otRequestData.forEach(function (ot) {
+                            axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php?type=user&userId=' + ot.userId, { crossdomain: true })
+                                .then(function (response) {
+                                    var userdata = response.data[0];
+                                    var name = userdata.user_firstname + ' ' + userdata.user_middlename + ' ' + userdata.user_lastname;
+                                    ot.avatar = userdata.user_avatar;
+                                    ot.username = name;
+                                    switch (ot.status) {
+                                        case Constants.LEAVE_APPROVAL_STATUS.PENDING:
+                                            ot.newstatus = 'Pending';
+                                            break;
+                                        case Constants.LEAVE_APPROVAL_STATUS.APPROVED:
+                                            ot.newstatus = 'Approved';
+                                            break;
+                                        case Constants.LEAVE_APPROVAL_STATUS.REJECTED:
+                                            ot.newstatus = 'Rejected';
+                                            break;
+                                    }
+                                }.bind(ot));
+                            ot.momentDate = moment(new Date(ot.date)).format('LL');
+                        });
+                        //console.log(response.data);
+                    } else {
+                        this.otRequestData = [];
+                    }
+                }.bind(this));
+        },
+        getUserOTRequest: function () {
 
         },
         deleteLeaveRequest: function (leaveId) {
@@ -276,7 +364,39 @@ export default {
                 }
             })
         },
-        approveLeave: function (leaveId) {
+        deleteOTRequest: function (otid) {
+            Swal.fire({
+                title: 'Delete overtime request?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=delete&otid=' + otid, { crossdomain: true })
+                        .then(function (response) {
+                            if (response.data) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your leave request has been deleted.',
+                                    'success'
+                                )
+                                this.getAllRequest();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'error deleting leave request!',
+                                    'error'
+                                )
+                            }
+                        }.bind(this));
+
+                }
+            })
+        },
+        approveLeave: function (leaveId, leaveType, userid, leaveHours) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "approve this leave request!",
@@ -287,7 +407,8 @@ export default {
                 confirmButtonText: 'Yes, approve it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.get(SettingsConstants.BASE_URL + '/leave.rest.php?type=approve&leaveId=' + leaveId, { crossdomain: true })
+                    axios.get(SettingsConstants.BASE_URL + '/leave.rest.php?type=approve&leaveId=' + leaveId +
+                        '&leaveType=' + leaveType + '&userId=' + userid + '&leaveHours=' + leaveHours, { crossdomain: true })
                         .then(function (response) {
                             if (response.data) {
                                 Swal.fire(
@@ -354,6 +475,37 @@ export default {
                 }
             })
         },
+        approveOTRequest: function (otid) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "approve this Overtime request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#6C757D',
+                confirmButtonText: 'Yes, approve it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=approve&otid=' + otid, { crossdomain: true })
+                        .then(function (response) {
+                            if (response.data) {
+                                Swal.fire(
+                                    'Success!',
+                                    'Overtime request approved!',
+                                    'success'
+                                )
+                                this.getAllRequest();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'error approving overtime request!',
+                                    'error'
+                                )
+                            }
+                        }.bind(this));
+                }
+            })
+        },
         openRejectLeaveModal: function (leave) {
             this.selectedLeaveDetails = leave;
             var rejectLeaveModal = new Modal(document.getElementById('rejectLeaveModal'));
@@ -386,12 +538,18 @@ export default {
                 }
             }.bind(this));
         },
+        rejectOT: function () {
+
+        },
         getAllRequest: function () {
             if (this.sessionData.user_level > 1) {
                 this.getAllLeaveRequest();
                 this.getAllTimeEditRequest();
+                this.getAllOTRequest();
             } else {
                 this.getUserLeaveRequest();
+                this.getUserTimeEditRequest();
+                this.getUserOTRequest();
             }
         },
         selectTab: function (event) {
@@ -404,8 +562,10 @@ export default {
 
         if (this.lastSelectedView) {
             var someTabTriggerEl = document.querySelector('#' + this.lastSelectedView);
-            var tab = new Tab(someTabTriggerEl);
-            tab.show();
+            if (someTabTriggerEl) {
+                var tab = new Tab(someTabTriggerEl);
+                tab.show();
+            }
         }
     },
 }

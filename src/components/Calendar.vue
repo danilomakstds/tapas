@@ -30,38 +30,52 @@
                 <span class="badge bg-timeinout me-2">{{selectedEvent.envStart}}</span> →
                 <span class="badge bg-timeinout ms-2">{{selectedEvent.envEnd}}</span><br/>
               </div>
-              <hr/>
-              <button type="button" class="btn btn-light btn-sm mt-2" @click="editTimeInOut"><font-awesome-icon :icon="['fa', 'pen']" /> Create edit request</button>
-              <div v-if="editTimeInOutMode">
-                <hr/>
-                <table>
-                  <tr>
-                    <td>
-                      <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Time In</label>
-                        <input type="text" class="form-control" name="timein" id="exampleFormControlInput1" placeholder="00:00" v-model="editTimeIn">
-                      </div></td>
-                    <td>
-                      <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Time Out</label>
-                        <input type="text" class="form-control" name="timeout" id="exampleFormControlInput1" placeholder="00:00" v-model="editTimeOut">
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="2">
-                      <div class="mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Add edit comments</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="timeEditComment" required></textarea>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
             </span>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+          <div class="modal-footer" v-if="selectedEvent.extendedProps.realTitle == 'Time In - Time Out'">
+              <div v-if="selectedEvent.extendedProps.otMinutes" class="w-100">
+                <div class="w-100">
+                  <input type="range" min="15" :max="selectedEvent.extendedProps.otMinutes" step="15" class="w-100" v-model="sliderValue">
+                </div>
+                <div class="w-100 text-end">
+                  <label for="exampleInputEmail1">OT minutes <span class="badge badge-pill badge-success bg-success">{{sliderValue}}</span></label>
+                  <span class="fst-italic d-block" style="font-size:11px" v-if="isOTCreated">
+                    Overtime request already created for this time entry.
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light btn-sm mt-2 me-2" @click="editTimeInOut"><font-awesome-icon :icon="['fa', 'pen']" /> Create edit request</button>
+                <button type="button" class="btn btn-light btn-sm mt-2" @click="addOTRequest(selectedEvent, sliderValue)" v-if="selectedEvent.extendedProps.otMinutes" :disabled="isOTCreated">
+                <font-awesome-icon :icon="['fa', 'plus']" /> Add OT request</button>
+              </div>
+          </div>
+          <div class="modal-footer"  v-if="editTimeInOutMode">
+            <div v-if="editTimeInOutMode">
+              <table>
+                <tr>
+                  <td>
+                    <div class="mb-3">
+                      <label for="exampleFormControlInput1" class="form-label">Time In</label>
+                      <input type="text" class="form-control" name="timein" id="exampleFormControlInput1" placeholder="00:00" v-model="editTimeIn">
+                    </div></td>
+                  <td>
+                    <div class="mb-3">
+                      <label for="exampleFormControlInput1" class="form-label">Time Out</label>
+                      <input type="text" class="form-control" name="timeout" id="exampleFormControlInput1" placeholder="00:00" v-model="editTimeOut">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <div class="mb-3">
+                      <label for="exampleFormControlTextarea1" class="form-label">Add edit comments</label>
+                      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="timeEditComment" required></textarea>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
             <button type="submit" class="btn btn-primary btn-sm" v-if="editTimeInOutMode">Save changes</button>
           </div>
         </div>

@@ -10,7 +10,8 @@ import {
     faWallet, faBusinessTime, faHourglassStart, faCalendar, faPlus,
     faChartLine, faFileInvoiceDollar, faMoneyCheckDollar, faCalendarMinus,
     faCalendarXmark, faClockFour, faMugHot, faGift, faUserGroup, faUserGear,
-    faCakeCandles, faHourglassEnd, faUserPen, faPen, faBan, faTrashCan, faComment
+    faCakeCandles, faHourglassEnd, faUserPen, faPen, faBan, faTrashCan, faComment,
+    faEye, faPrint
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faPhone, faCartShopping, faCheck, faCartArrowDown, faBars,
@@ -18,6 +19,7 @@ library.add(faPhone, faCartShopping, faCheck, faCartArrowDown, faBars,
     faWallet, faBusinessTime, faHourglassStart, faCalendar, faPlus,
     faChartLine, faFileInvoiceDollar, faMoneyCheckDollar, faCalendarMinus,
     faCalendarXmark, faClockFour, faMugHot, faGift, faUserGroup, faUserGear,
-    faCakeCandles, faHourglassEnd, faUserPen, faPen, faBan, faTrashCan, faComment);
+    faCakeCandles, faHourglassEnd, faUserPen, faPen, faBan, faTrashCan, faComment,
+    faEye, faPrint);
 
 createApp(App).use(store).use(router).component("font-awesome-icon", FontAwesomeIcon).mount('#app')

@@ -15,7 +15,7 @@
                   </a>
                 </router-link>
                 <router-link to="/payslips">
-                  <a href="#" class="nav_link" id="payslip-link">
+                  <a href="#" class="nav_link" id="payslips-link">
                     <font-awesome-icon :icon="['fa', 'money-check-dollar']" class="ms-2 nav_icon" />
                     <span class="nav_name">Payslips</span>
                   </a>

@@ -29,16 +29,17 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col" v-if="this.sessionData.user_level > 1"></th>
+                        <th scope="col" v-if="sessionData.user_level > 1"></th>
                         <th scope="col">Date</th>
                         <th scope="col">Time Modification</th>
                         <th scope="col">Comments</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-for="timedata in timeinoutRequestData" :key="timedata.id">
-                        <td v-if="this.sessionData.user_level > 1">
+                        <td v-if="sessionData.user_level > 1">
                            <img :src="timedata.avatar" style="height:30px; width:30px" class="rounded-circle me-2" />
                             {{timedata.username}}
                         </td>
@@ -51,23 +52,31 @@
                         </td>
                         <td>{{timedata.comment}}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != timedata.userId ? '' : disabled"
+                          <span class="badge rounded-pill"
+                          v-bind:class="{ 'bg-secondary': (timedata.approval_status == constantsApprovalStatus.PENDING),
+                          'bg-success': (timedata.approval_status == constantsApprovalStatus.APPROVED),
+                          'bg-danger': (timedata.approval_status == constantsApprovalStatus.REJECTED) }">
+                            {{timedata.status}}
+                          </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="sessionData.id != timedata.userId ? '' : disabled"
                             >
                               <font-awesome-icon :icon="['fa', 'pen']" />
                             </button>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != timedata.userId ? '' : disabled"
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="sessionData.id != timedata.userId ? '' : disabled"
                             >
                               <font-awesome-icon :icon="['fa', 'trash-can']" />
                             </button>
                             <button type="button" class="btn btn-primary btn-sm me-2"
-                            :disabled="(this.sessionData.user_level < 2 ||
-                            (this.sessionData.user_level == 2 && timedata.userId == this.sessionData.id))"
+                            :disabled="(sessionData.user_level < 2 ||
+                            (sessionData.user_level == 2 && timedata.userId == sessionData.id))"
                             @click="approveTimeEdit(timedata)">
                               <font-awesome-icon :icon="['fa', 'check']" />
                             </button>
                             <button type="button" class="btn btn-primary btn-sm me-2"
-                            :disabled="(this.sessionData.user_level < 2 ||
-                            (this.sessionData.user_level == 2 && timedata.userId == this.sessionData.id))"
+                            :disabled="(sessionData.user_level < 2 ||
+                            (sessionData.user_level == 2 && timedata.userId == sessionData.id))"
                             >
                               <font-awesome-icon :icon="['fa', 'ban']" />
                             </button>
@@ -85,7 +94,7 @@
                     <table class="table">
                       <thead>
                         <tr>
-                          <th scope="col" v-if="this.sessionData.user_level > 1"></th>
+                          <th scope="col" v-if="sessionData.user_level > 1"></th>
                           <th scope="col">Date</th>
                           <th scope="col">Hours</th>
                           <th scope="col">Leave Type</th>
@@ -96,7 +105,7 @@
                       </thead>
                       <tbody>
                         <tr v-for="leave in leaveRequestData" :key="leave.id">
-                          <td v-if="this.sessionData.user_level > 1">
+                          <td v-if="sessionData.user_level > 1">
                             <img :src="leave.avatar" style="height:30px; width:30px" class="rounded-circle me-2" />
                             {{leave.username}}</td>
                           <td>
@@ -127,23 +136,23 @@
                             </span>
                           </td>
                           <td>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled"
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="sessionData.id != leave.userId ? '' : disabled"
                             @click="showEditLeaveModal(leave)">
                               <font-awesome-icon :icon="['fa', 'pen']" />
                             </button>
-                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="this.sessionData.id != leave.userId ? '' : disabled"
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="sessionData.id != leave.userId ? '' : disabled"
                             @click="deleteLeaveRequest(leave.id)">
                               <font-awesome-icon :icon="['fa', 'trash-can']" />
                             </button>
                             <button type="button" class="btn btn-primary btn-sm me-2"
-                            :disabled="(this.sessionData.user_level < 2 ||
-                            (this.sessionData.user_level == 2 && leave.userId == this.sessionData.id))"
-                            @click="approveLeave(leave.id)">
+                            :disabled="(sessionData.user_level < 2 ||
+                            (sessionData.user_level == 2 && leave.userId == sessionData.id))"
+                            @click="approveLeave(leave.id, leave.leave_type, leave.userId, leave.totalhours)">
                               <font-awesome-icon :icon="['fa', 'check']" />
                             </button>
                             <button type="button" class="btn btn-primary btn-sm me-2"
-                            :disabled="(this.sessionData.user_level < 2 ||
-                            (this.sessionData.user_level == 2 && leave.userId == this.sessionData.id))"
+                            :disabled="(sessionData.user_level < 2 ||
+                            (sessionData.user_level == 2 && leave.userId == sessionData.id))"
                             @click="openRejectLeaveModal(leave)">
                               <font-awesome-icon :icon="['fa', 'ban']" />
                             </button>
@@ -155,25 +164,54 @@
                 </div>
                 <div class="tab-pane fade" id="overtime" role="tabpanel" aria-labelledby="overtime-tab">
                   <!-- overtime Start-->
-                  <button type="button" class="btn btn-primary btn-sm float-end" @click="showOTModal">
-                    <font-awesome-icon :icon="['fa', 'plus']" /> Add OT Request
-                  </button>
                     <table class="table">
                       <thead>
                         <tr>
-                          <th scope="col" style="width:40px"></th>
+                          <th scope="col" style="width:400px" v-if="sessionData.user_level > 1"></th>
                           <th scope="col">Date</th>
-                          <th scope="col">Hours</th>
+                          <th scope="col">Minutes</th>
+                          <th scope="col">Status</th>
                           <th scope="col">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                        <tr v-for="ot in otRequestData" :key="ot.id">
+                          <td v-if="sessionData.user_level > 1">
+                            <img :src="ot.avatar" style="height:30px; width:30px" class="rounded-circle me-2" />
+                              {{ot.username}}
+                          </td>
+                          <td>{{ot.momentDate}}</td>
+                          <td><strong>{{ot.minutes}}</strong></td>
+                          <td>
+                            <span class="badge rounded-pill"
+                            v-bind:class="{ 'bg-secondary': (ot.status == constantsApprovalStatus.PENDING),
+                            'bg-success': (ot.status == constantsApprovalStatus.APPROVED),
+                            'bg-danger': (ot.status == constantsApprovalStatus.REJECTED) }">
+                              {{ot.newstatus}}
+                            </span>
+                          </td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-sm me-2" :disabled="sessionData.id != ot.userId ? '' : disabled"
+                            >
+                              <font-awesome-icon :icon="['fa', 'pen']" />
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm me-2" :disabled="sessionData.id != ot.userId ? '' : disabled"
+                            @click="deleteOTRequest(ot.id)">
+                              <font-awesome-icon :icon="['fa', 'trash-can']" />
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm me-2"
+                            :disabled="(sessionData.user_level < 2 ||
+                            (sessionData.user_level == 2 && ot.userId == sessionData.id))"
+                            @click="approveOTRequest(ot.id)">
+                              <font-awesome-icon :icon="['fa', 'check']" />
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm me-2"
+                            :disabled="(sessionData.user_level < 2 ||
+                            (sessionData.user_level == 2 && ot.userId == sessionData.id))"
+                            >
+                              <font-awesome-icon :icon="['fa', 'ban']" />
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -199,23 +237,23 @@
                 <div class="modal-body" style="font-size:12px">
                   <span>Remaining hours</span><br/><br/>
                   <label class="form-label"> <b>Vacation</b> </label>
-                  <span class="badge bg-primary ms-2 me-2" style="font-size: 13px">120 hours</span>
+                  <span class="badge bg-primary ms-2 me-2" style="font-size: 13px">{{userRemainingLeaves.user_vl}} hours</span>
                    <label class="form-label"> <b>Sick</b> </label>
-                  <span class="badge bg-warning ms-2 me-2" style="font-size: 13px">80 hours</span>
+                  <span class="badge bg-warning ms-2 me-2" style="font-size: 13px">{{userRemainingLeaves.user_sl}} hours</span>
                   <label class="form-label"> <b>Birthday</b> </label>
-                  <span class="badge bg-info ms-2 me-2" style="font-size: 13px">8 hours</span>
+                  <span class="badge bg-info ms-2 me-2" style="font-size: 13px">{{userRemainingLeaves.user_bl}} hours</span>
                   <label class="form-label"> <b>Emergency</b> </label>
-                  <span class="badge bg-danger ms-2 me-2" style="font-size: 13px">100 hours</span>
+                  <span class="badge bg-danger ms-2 me-2" style="font-size: 13px">{{userRemainingLeaves.user_el}} hours</span>
                   <label class="form-label"> <b>Maternity</b> </label>
-                  <span class="badge bg-maternity ms-2" style="font-size: 13px">120 hours</span>
+                  <span class="badge bg-maternity ms-2" style="font-size: 13px">{{userRemainingLeaves.user_ml}} hours</span>
                   <hr/>
                   <label class="form-label">Select Leave Type</label>
-                  <select class="form-select form-select-md mt-2" v-model="leaveKey" name="leavetype">
-                    <option value="1">Sick Leave</option>
-                    <option value="2">Vacation Leave</option>
-                    <option value="3">Emergency Leave</option>
-                    <option value="4">Maternity Leave</option>
-                    <option value="5">Birthday Leave</option>
+                  <select class="form-select form-select-md mt-2" v-model="leaveKey" name="leavetype" required>
+                    <option value="1" v-if="userRemainingLeaves.user_sl != 0">Sick Leave</option>
+                    <option value="2" v-if="userRemainingLeaves.user_vl != 0">Vacation Leave</option>
+                    <option value="3" v-if="userRemainingLeaves.user_el != 0">Emergency Leave</option>
+                    <option value="4" v-if="userRemainingLeaves.user_ml != 0">Maternity Leave</option>
+                    <option value="5" v-if="userRemainingLeaves.user_bl != 0">Birthday Leave</option>
                   </select>
                   <table class="w-100 mt-2" v-if="leaveKey">
                     <tr>
@@ -248,8 +286,8 @@
                   <br/>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn btn-primary" type="submit">Save</button>
-                  <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-primary btn-sm" type="submit">Create leave request</button>
+                  <button class="btn btn-light btn-sm" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
                 </div> 
               </div>
             </div>
@@ -271,7 +309,7 @@
                 <div class="modal-body" style="font-size:12px">
                   <span>Remaining hours</span><br/><br/>
                   <label class="form-label"> <b>Vacation</b> </label>
-                  <span class="badge bg-primary ms-2 me-2" style="font-size: 13px">120 hours</span>
+                  <span class="badge bg-primary ms-2 me-2" style="font-size: 13px">{{userRemainingLeaves.user_vl}} hours</span>
                    <label class="form-label"> <b>Sick</b> </label>
                   <span class="badge bg-warning ms-2 me-2" style="font-size: 13px">80 hours</span>
                   <label class="form-label"> <b>Birthday</b> </label>
@@ -283,11 +321,11 @@
                   <hr/>
                   <label class="form-label">Select Leave Type</label>
                   <select class="form-select form-select-md mt-2" v-model="editLeave.leave_type" name="leavetype">
-                    <option value="1">Sick Leave</option>
-                    <option value="2">Vacation Leave</option>
-                    <option value="3">Emergency Leave</option>
-                    <option value="4">Maternity Leave</option>
-                    <option value="5">Birthday Leave</option>
+                    <option value="1" v-if="userRemainingLeaves.user_sl">Sick Leave</option>
+                    <option value="2" v-if="userRemainingLeaves.user_vl">Vacation Leave</option>
+                    <option value="3" v-if="userRemainingLeaves.user_el">Emergency Leave</option>
+                    <option value="4" v-if="userRemainingLeaves.user_ml">Maternity Leave</option>
+                    <option value="5" v-if="userRemainingLeaves.user_bl">Birthday Leave</option>
                   </select>
                   <table class="w-100 mt-2" v-if="editLeave.leave_type">
                     <tr>
@@ -328,31 +366,6 @@
           </div>
         </form>
           <!-- Edit Leave Request Modal END -->
-
-
-
-          <!-- Add OT Request Modal -->
-        <form @submit="addOTRequest">
-          <div class="modal fade ot-request" id="addOTModal">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalToggleLabel2">Add Overtime Request</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="font-size:12px">
-                  
-                </div>
-                <div class="modal-footer">
-                  <button class="btn btn-primary" type="submit">Save</button>
-                  <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
-                </div> 
-              </div>
-            </div>
-          </div>
-        </form>
-          <!-- Add OT Request Modal END -->
-
 
         <!--Reject Leave Request Modal -->
         <form @submit="rejectLeave">

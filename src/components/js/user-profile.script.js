@@ -25,7 +25,9 @@ export default {
         getUserDetails: function () {
             axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php?type=all-byid&userId=' + this.sessionData.id, { crossdomain: true })
                 .then(function (response) {
-                    this.userDetails = response.data[0];
+                    if (response.data) {
+                        this.userDetails = response.data[0];
+                    }
                 }.bind(this));
         }
     },
