@@ -6,10 +6,10 @@ tbody {
     border-top: none !important;
 }
 
-#editbutton,#resignbutton {
+#editbutton,#resignbutton, #edittime {
     opacity: .3;
 }
 
-#editbutton:hover, #resignbutton:hover {
+#editbutton:hover, #resignbutton:hover, #edittime:hover {
     opacity: 1;
 }

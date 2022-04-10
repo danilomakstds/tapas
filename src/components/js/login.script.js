@@ -44,7 +44,7 @@ export default {
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then(function (response) {
-                    if (response.data) {
+                    if (response.data.length == 1) {
                         this.showMessage = true;
                         this.message = "<strong>Success! </strong>";
                         this.messageType = "alert-success";

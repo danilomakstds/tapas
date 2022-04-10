@@ -188,7 +188,7 @@ export default {
                         this.$emit('updateIsOnDuty', false);
                         response.data.forEach(function (e) {
                             var event = [];
-                            var end, start, minutes, sheduledOut, scheduledIn, ot;
+                            var end = null, start = null, minutes = null, sheduledOut = null, scheduledIn = null, ot = null;
 
                             /* get Scheduled out */
                             var reg = /\s\d\d:\d\d:\d\d\s/
@@ -206,7 +206,12 @@ export default {
 
 
                             /* use scheduled out as timeout if user exceeds scheduled out */
-                            scheduledIn = e.timein.replace(reg, " " + e.projected_timein + ":00 ");
+                            if (e.projected_timein) {
+                                scheduledIn = e.timein.replace(reg, " " + e.projected_timein + ":00 ");
+                            } else {
+                                scheduledIn = e.timein;
+                            }
+
                             if ((new Date(e.timein)).getTime() > (new Date(scheduledIn)).getTime()) {
                                 var diff = moment(e.timein).diff(moment(scheduledIn), 'minutes');
                                 if (diff < 15) { //if less than 15 minutes
@@ -222,12 +227,15 @@ export default {
                             event.start = start.format();
                             event.evntStart = start.format();
                             if (e.timeout) {
-                                sheduledOut = moment(scheduledOut);
+                                sheduledOut = scheduledOut ? moment(scheduledOut) : moment(e.timeout);
                                 end = moment(e.timeout);
                                 minutes = sheduledOut.diff(start, 'minutes');
                                 minutes = minutes + (ot ? ot : 0);
                                 if (ot) {
                                     event.otMinutes = ot;
+                                }
+                                if (!sheduledOut && minutes > 540) {
+                                    event.otMinutes = minutes - 540;
                                 }
                                 event.end = end.format();
                                 event.evntEnd = end.format();
@@ -366,6 +374,62 @@ export default {
                     }
                 }.bind(this));
         },
+        getAllApprovedLeave: function () {
+            axios.get(SettingsConstants.BASE_URL + '/leave.rest.php?type=all-approved', { crossdomain: true })
+                .then(function (response) {
+                    if (response.data) {
+                        this.myApprovedLeaveEvents = response.data;
+                        this.myApprovedLeaveEvents.forEach(function (myLeaves) {
+                            var event = [];
+                            switch (myLeaves.leave_type) {
+                                case Constants.LEAVE_TYPES.SICK:
+                                    event.title = 'Sick Leave';
+                                    event.backgroundColor = "#FFC107";
+                                    event.borderColor = "#FFC107";
+                                    break;
+                                case Constants.LEAVE_TYPES.VACATION:
+                                    event.title = 'Vacation Leave';
+                                    event.backgroundColor = "#007BFF";
+                                    event.borderColor = "#007BFF";
+                                    break;
+                                case Constants.LEAVE_TYPES.EMERGENCY:
+                                    event.title = 'Emergency Leave';
+                                    event.backgroundColor = "#DC3545";
+                                    event.borderColor = "#DC3545";
+                                    break;
+                                case Constants.LEAVE_TYPES.MATERNITY:
+                                    event.title = 'Maternity Leave';
+                                    event.backgroundColor = "#563D7C"
+                                    event.borderColor = "#563D7C"
+                                    break;
+                                case Constants.LEAVE_TYPES.BIRTHDAY:
+                                    event.title = 'Birthday Leave';
+                                    event.backgroundColor = "#17A2B8";
+                                    event.borderColor = "#17A2B8";
+                                    break;
+                            }
+                            event.date = moment(myLeaves.timestart).format('YYYY-MM-DD');
+                            event.eventDay = moment(myLeaves.timestart).format('LL');
+                            event.evntStart = myLeaves.timestart;
+                            event.evntEnd = myLeaves.timeend;
+                            event.realTitle = event.title;
+                            event.allDay = true;
+                            event.eventType = "leave";
+                            event.description = myLeaves.comment;
+                            if (parseInt(this.sessionData.user_level) > 1) {
+                                this.userBasicDetails.data.filter(function (user) {
+                                    if (user.id == myLeaves.userId) {
+                                        event.title = user.user_firstname + ' - ' + event.title;
+                                        event.username = user.user_firstname + ' ' + user.user_lastname;
+                                    }
+                                }.bind(event));
+                            }
+                            this.calendarOptions.events.push(event);
+                        }.bind(this));
+                        store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
+                    }
+                }.bind(this));
+        },
         checkIfOtCreated: function (date) {
             axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=get-item-bydate&userId=' + this.sessionData.id + '&date=' + date, { crossdomain: true })
                 .then(function (response) {
@@ -389,6 +453,9 @@ export default {
             if (this.sessionData.user_level > 1) {
                 this.getAllUserBasicDetails();
                 //this.getAllTimeInOut();
+                this.getAllApprovedLeave();
+            } else {
+                this.getAllApprovedLeavePerUser();
             }
             this.getAllTimeInOutPerUser();
             this.getAllHolidays();

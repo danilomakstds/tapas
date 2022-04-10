@@ -68,13 +68,18 @@ export default {
             event.preventDefault();
             var enddate, startdate;
             var bodyFormData = new FormData();
-            if (this.sessionData.user_schedule_in.split(':')[0] > this.sessionData.user_schedule_out.split(':')[0]) {
-                enddate = new Date(this.leaveReqDate + " " + this.sessionData.user_schedule_in + ":00");
-                enddate.setDate(enddate.getDate() + 1);
+            if (this.sessionData.user_schedule_in && this.sessionData.user_schedule_out) {
+                if (this.sessionData.user_schedule_in.split(':')[0] > this.sessionData.user_schedule_out.split(':')[0]) {
+                    enddate = new Date(this.leaveReqDate + " " + this.sessionData.user_schedule_in + ":00");
+                    enddate.setDate(enddate.getDate() + 1);
+                } else {
+                    enddate = new Date(this.leaveReqDate + " " + this.sessionData.user_schedule_out + ":00");
+                }
+                startdate = new Date(this.leaveReqDate + " " + this.sessionData.user_schedule_in + ":00");
             } else {
-                enddate = new Date(this.leaveReqDate + " " + this.sessionData.user_schedule_out + ":00");
+                startdate = new Date(this.leaveReqDate + " 00:00");
+                enddate = new Date(this.leaveReqDate + " 08:00");
             }
-            startdate = new Date(this.leaveReqDate + " " + this.sessionData.user_schedule_in + ":00");
             bodyFormData.append('leavetype', this.leaveKey);
             bodyFormData.append('leavedatestart', startdate);
             bodyFormData.append('leavedateend', enddate);
@@ -300,7 +305,7 @@ export default {
         getAllOTRequest: function () {
             axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=getall', { crossdomain: true })
                 .then(function (response) {
-                    if (response) {
+                    if (response.data) {
                         this.otRequestData = response.data;
                         this.otRequestData.forEach(function (ot) {
                             axios.get(SettingsConstants.BASE_URL + '/get-users.rest.php?type=user&userId=' + ot.userId, { crossdomain: true })

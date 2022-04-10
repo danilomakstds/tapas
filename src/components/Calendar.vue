@@ -16,7 +16,7 @@
             <span v-if="selectedEvent.extendedProps.realTitle != 'Time In - Time Out'">
               <span v-if="selectedEvent.extendedProps.eventType == 'leave'">
                 <span class="badge me-2" v-bind:style="{backgroundColor: selectedEvent._def.ui.backgroundColor}">{{selectedEvent.extendedProps.eventDay}}</span>
-                {{selectedEvent.extendedProps.description}}
+                {{selectedEvent.extendedProps.description}} <span v-if="selectedEvent.extendedProps.username"> | <strong>{{selectedEvent.extendedProps.username}}</strong></span>
               </span>
               <span v-else>
                 <div class="alert alert-info" role="alert">
@@ -35,7 +35,7 @@
           <div class="modal-footer" v-if="selectedEvent.extendedProps.realTitle == 'Time In - Time Out'">
               <div v-if="selectedEvent.extendedProps.otMinutes" class="w-100">
                 <div class="w-100">
-                  <input type="range" min="15" :max="selectedEvent.extendedProps.otMinutes" step="15" class="w-100" v-model="sliderValue">
+                  <input type="range" :max="selectedEvent.extendedProps.otMinutes" class="w-100" v-model="sliderValue">
                 </div>
                 <div class="w-100 text-end">
                   <label for="exampleInputEmail1">OT minutes <span class="badge badge-pill badge-success bg-success">{{sliderValue}}</span></label>

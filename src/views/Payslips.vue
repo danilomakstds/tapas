@@ -27,111 +27,7 @@
                         <div class="row mt-2">
                             <div class="col-md-4">
                                 <div class="row">
-                                    <div class="col-md-5 mt-2">
-                                        <div class="d-flex justify-content-start">
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                                                <label class="form-check-label" for="flexRadioDefault1">
-                                                    15th
-                                                </label>
-                                            </div>
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                                                <label class="form-check-label" for="flexRadioDefault2">
-                                                    30th
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <hr/>
-                                        <div class="mb-3">
-                                            <label for="payroll-start" class="form-label">Pay Period Start</label>
-                                            <input type="date" class="form-control" id="payroll-start" v-model="payperiodStart">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="payroll-start" class="form-label">Pay Period End</label>
-                                            <input type="date" class="form-control" id="payroll-start" v-model="payperiodEnd">
-                                        </div>
-
-                                        <hr/>
-                                        <span>Adjustments</span>
-                                        <div class="form-check mt-3 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="13month">
-                                            <label class="form-check-label" for="13month">
-                                                13TH MONTH
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="incentive">
-                                            <label class="form-check-label" for="incentive">
-                                                INCENTIVE
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="paid-leaves">
-                                            <label class="form-check-label" for="paid-leaves">
-                                                PAID LEAVES
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="holiday-pay">
-                                            <label class="form-check-label" for="holiday-pay">
-                                                HOLIDAY PAY
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="adjustmentothers">
-                                            <label class="form-check-label" for="adjustmentothers">
-                                                OTHERS
-                                            </label>
-                                        </div>
-
-
-                                        <hr/>
-                                        <span>Deductions</span>
-                                        <div class="form-check mt-3 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="tax">
-                                            <label class="form-check-label" for="tax">
-                                                W/H TAX
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="sss">
-                                            <label class="form-check-label" for="sss">
-                                                SSS
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="philhealth">
-                                            <label class="form-check-label" for="philhealth">
-                                                PHILHEALTH
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="pagibig">
-                                            <label class="form-check-label" for="pagibig">
-                                                PAG-IBIG
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="tardiness">
-                                            <label class="form-check-label" for="tardiness">
-                                                TARDINESS 
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="LOAN">
-                                            <label class="form-check-label" for="LOAN">
-                                                LOAN 
-                                            </label>
-                                        </div>
-                                        <div class="form-check mt-1 ms-2">
-                                            <input class="form-check-input" type="checkbox" value="" id="deductionothers">
-                                            <label class="form-check-label" for="deductionothers">
-                                                OTHERS 
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-7 mt-2">
+                                    <div class="col-md-8 mt-2">
                                         <table class="table table-hover">
                                             <tbody>
                                                 <tr v-for="user in employees" :key="user.id">
@@ -155,6 +51,112 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="col-md-4 mt-2">
+                                        <div class="d-flex justify-content-start">
+                                            <div class="form-check me-2">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="15" v-model="selectedPeriod">
+                                                <label class="form-check-label" for="flexRadioDefault1">
+                                                    15th
+                                                </label>
+                                            </div>
+                                            <div class="form-check me-2">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="30" v-model="selectedPeriod">
+                                                <label class="form-check-label" for="flexRadioDefault2">
+                                                    30th
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="mb-3">
+                                            <label for="payroll-start" class="form-label">Pay Period Start</label>
+                                            <input type="date" class="form-control" id="payroll-start" v-model="payperiodStart">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="payroll-start" class="form-label">Pay Period End</label>
+                                            <input type="date" class="form-control" id="payroll-start" v-model="payperiodEnd">
+                                        </div>
+
+                                        <div id="decution-adjustments" v-if="isUserSelected">
+                                            <hr/>
+                                            <span>Adjustments</span>
+                                            <div class="form-check mt-3 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="13month">
+                                                <label class="form-check-label" for="13month">
+                                                    13TH MONTH
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="incentive">
+                                                <label class="form-check-label" for="incentive">
+                                                    INCENTIVE
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="paid-leaves" disabled checked>
+                                                <label class="form-check-label" for="paid-leaves">
+                                                    PAID LEAVES
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="holiday-pay" disabled checked>
+                                                <label class="form-check-label" for="holiday-pay">
+                                                    HOLIDAY PAY
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="adjustmentothers" :checked="selectedPeriod == userDetails.otherAdjustments" disabled>
+                                                <label class="form-check-label" for="adjustmentothers">
+                                                    OTHERS (2k)
+                                                </label>
+                                            </div>
+
+
+                                            <hr/>
+                                            <span>Deductions</span>
+                                            <div class="form-check mt-3 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="tax" :checked="selectedPeriod == userDetails.taxDeduction" disabled>
+                                                <label class="form-check-label" for="tax">
+                                                    W/H TAX
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="sss" :checked="selectedPeriod == userDetails.sssDeduction" disabled>
+                                                <label class="form-check-label" for="sss">
+                                                    SSS
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="philhealth" :checked="selectedPeriod == userDetails.philhealthDeduction" disabled>
+                                                <label class="form-check-label" for="philhealth">
+                                                    PHILHEALTH
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="pagibig" :checked="selectedPeriod == userDetails.pagibigDeduction" disabled>
+                                                <label class="form-check-label" for="pagibig">
+                                                    PAG-IBIG
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="tardiness" disabled checked>
+                                                <label class="form-check-label" for="tardiness">
+                                                    TARDINESS 
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="LOAN" :checked="selectedPeriod == userDetails.loanDeduction" disabled>
+                                                <label class="form-check-label" for="LOAN">
+                                                    LOAN 
+                                                </label>
+                                            </div>
+                                            <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="deductionothers">
+                                                <label class="form-check-label" for="deductionothers">
+                                                    OTHERS 
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-8 bg-light">
@@ -166,7 +168,7 @@
                                         <tr> 
                                             <td colspan="7">
                                                 <h3 class="mb-0">MAKS Datatech Virtual Assistance Services</h3>
-                                                <p>Unit 3, Pinili Apartment, Purok Mangga, Bgry. Talay, Dumaguete City, Negros Oriental</p>
+                                                <p>Unit 8, Elle Homes Purok Mangga Talay, Dumaguete City, Negros Oriental</p>
                                                 <div>
                                                     <h6 class="float-end">
                                                         PERIOD : <strong>{{payperiodStart}}</strong> to <strong>{{payperiodEnd}}</strong>
@@ -176,25 +178,25 @@
                                             </td>
                                             <td colspan="2">
                                                 <div class="d-flex justify-content-center">
-                                                    <img src="https://scontent.fceb3-1.fna.fbcdn.net/v/t1.6435-9/163649932_120786370008950_9068433196374269386_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=A3PYQQ__ueYAX-TbHCW&_nc_ht=scontent.fceb3-1.fna&oh=00_AT_5cN0AX3rOyHAk5PPACjm7c8Lq9s5kDhNi3vn9utt5VQ&oe=6253D1B3" style="height:80px;"/>
+                                                    <img src="https://scontent.fceb3-1.fna.fbcdn.net/v/t1.6435-9/163649932_120786370008950_9068433196374269386_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=A3PYQQ__ueYAX-TbHCW&_nc_ht=scontent.fceb3-1.fna&oh=00_AT_5cN0AX3rOyHAk5PPACjm7c8Lq9s5kDhNi3vn9utt5VQ&oe=6253D1B3" style="height:100px;"/>
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr> 
                                             <td colspan="7"></td>
                                             <td colspan="2">
-                                                BASIC PAY : {{userDetails.user_salary}}
+                                                BASIC PAY : {{userDetails.ratePerHour}}
                                             </td>
                                         </tr>
                                         <tr> 
                                             <td colspan="3"> EMPLOYEE : <strong>{{userDetails.fullname}}</strong></td>
-                                            <td colspan="4"> STATUS : <strong>REGULAR</strong> </td>
+                                            <td colspan="4"> POSITION : <strong>{{userDetails.user_jobdescription}}</strong></td>
                                             <td colspan="2">
                                                 OVERTIME  : 0.00
                                             </td>
                                         </tr>
                                         <tr> 
-                                            <td colspan="3"> POSITION : <strong>{{userDetails.user_jobdescription}}</strong></td>
+                                            <td colspan="3"> STATUS : <strong>REGULAR</strong></td>
                                             <td colspan="4"> WORKING HOURS : <strong>80</strong> </td>
                                             <td colspan="2"></td>
                                         </tr>

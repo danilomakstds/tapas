@@ -70,6 +70,13 @@ export default {
                 }
             }.bind(this));
         },
+        logOutUser: function () {
+            store.commit('RESET_SESSION_DATA');
+            store.commit('RESET_LAST_SELECTED_VIEW');
+            if (!this.sessionData) {
+                this.$router.push('/login');
+            }
+        },
         setTimeOut: function () {
             var timeOut = new Date();
             Swal.fire({
@@ -87,10 +94,13 @@ export default {
                     this.saveTimeInOut(timeOut, 'timeout');
                     Swal.fire(
                         'Success!',
-                        'You are off duty.',
+                        'You are off duty. loggin you out in 5 seconds',
                         'success'
-                    );
-
+                    ).then(function () {
+                        setTimeout(function () {
+                            this.logOutUser();
+                        }.bind(this), 5000);
+                    }.bind(this));
                 }
             }.bind(this));
         },
