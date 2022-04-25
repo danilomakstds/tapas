@@ -54,7 +54,7 @@ export default {
             store.commit('RESET_SESSION_DATA');
             store.commit('RESET_LAST_SELECTED_VIEW');
             if (!this.sessionData) {
-                window.location.href = '/';
+                this.$router.push('/login');
             }
         }
     },
@@ -63,3 +63,16 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+  .badge-pill {
+    border-radius: 75px;
+    top: 0;
+    right: -5px;
+    position: absolute;
+  }
+
+  .badge-danger {
+    background-color: #F46A6A !important;
+  }
+</style>

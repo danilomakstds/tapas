@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
-@import url('http://fonts.cdnfonts.com/css/indigo');
 
 :root {
     --header-height: 3rem;
@@ -198,18 +197,6 @@ a {
     .dashboard-pd {
         padding-left: calc(var(--nav-width) + 100px)
     }
-}
-
-
-.badge-danger {
-  background-color: #F46A6A !important;
-}
-
-.badge-pill {
-  border-radius: 75px;
-  top: 0;
-  right: -5px;
-  position: absolute;
 }
 
 .dropdown-menu {

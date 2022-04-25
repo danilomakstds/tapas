@@ -7,7 +7,8 @@ export default createStore({
     isUserTimeIn: null,
     userTimeIn: null,
     sessionData: null,
-    lastSelectedView: null
+    lastSelectedView: null,
+    noTimeOutID: null
   },
   mutations: {
     SET_FULL_CALENDAR_PROPS: function (state, fullCalendarProps) {
@@ -20,10 +21,16 @@ export default createStore({
       state.isUserTimeIn = isUserTimeIn;
     },
     RESET_IS_USER_TIME_IN: function (state) {
-      state.isUserTimeIn = false;
+      state.isUserTimeIn = null;
     },
     SET_USER_TIME_IN: function (state, userTimeIn) {
       state.userTimeIn = userTimeIn;
+    },
+    SET_NO_TIME_OUT_ID: function (state, noTimeOutID) {
+      state.noTimeOutID = noTimeOutID;
+    },
+    RESET_NO_TIME_OUT_ID: function (state) {
+      state.noTimeOutID = null;
     },
     RESET_USER_TIME_IN: function (state) {
       state.userTimeIn = false;
