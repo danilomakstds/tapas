@@ -60,6 +60,10 @@
 //     margin-bottom: 10px;
 // }
 
+td.fc-day:hover {
+	box-shadow: 0 0 0 2px #d0d0d0;
+}
+
 @keyframes pulse {
 	0% {
 		transform: scale(0.95);

@@ -1,0 +1,22 @@
+.bg-maks {
+    background-image: url("../../assets/images/makses.png");
+    background-position: center;
+}
+
+.profile-avatar {
+    height:130px; width:130px;
+    position: absolute;
+    top: -110px;
+}
+
+.accordion-button:focus {
+    z-index: 3;
+    border-color: none !important;
+    outline: 0;
+    box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #2A3042;
+    color: #fff !important;
+}

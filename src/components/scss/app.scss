@@ -10,6 +10,13 @@
     font-size: 15px;
 }
 
+@font-face {
+    font-family: 'Indigo';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Indigo'), url('https://fonts.cdnfonts.com/s/20860/Indigo_PersonalUse.woff') format('woff');
+}
+
 body {
     padding-right: 17px !important;
 }
@@ -31,4 +38,12 @@ a {
     right: 30px !important;
     top: 30px !important;
     left: auto !important;
+}
+
+.bg-timeinout {
+    background-color: #5CB85C;
+}
+
+.bg-maternity {
+    background-color: #563D7C;
 }

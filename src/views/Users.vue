@@ -4,211 +4,568 @@
     <SideNav />
         <br/>
         <div class="users">
-            <div class="card-body mb-3">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col" style="width:40px"></th>
-                    <th scope="col">Users</th>
-                    <th scope="col">ID #</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">User Group</th>
-                    <th scope="col">Time In (Today)</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="user in userData" :key="user.id">
-                    <td class="d-flex flex-row-reverse"><img :src="user.user_avatar" style="height:30px; width:30px" class="rounded-circle"/></td>
-                    <td>{{user.user_firstname}} {{user.user_middlename}} {{user.user_lastname}}</td>
-                    <td>{{user.user_id_number}}</td>
-                    <td>{{user.user_email}}</td>
-                    <td>
-                      <span v-if="user.user_level == '1'" class="badge rounded-pill bg-secondary">User</span>
-                      <span v-if="user.user_level == '2'" class="badge rounded-pill bg-info">HR Manager</span>
-                      <span v-if="user.user_level == '3'" class="badge rounded-pill bg-primary">Super Admin</span>
-                    </td>
-                    <td> -- </td>
-                    <td>
-                      <button type="button" class="btn btn-light btn-sm me-2" id="editbutton" @click="showEditModal(user)">
-                      <font-awesome-icon :icon="['fa', 'pen']" class="" /></button>
-                      <button type="button" class="btn btn-light btn-sm" id="resignbutton">
-                      <font-awesome-icon :icon="['fa', 'ban']" class="" /></button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
 
-              <!-- Scrollable modal -->
-              <form @submit="updateUser">
-                <div class="modal fade" id="editUserModal">
-                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalToggleLabel2">Edit | <strong>{{selectedUser.user_firstname}}</strong></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="row">
+              <div class="col-lg-2">
+                <div class="nav nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="justify-content: unset">
+                  <button class="nav-link active w-100" id="v-pills-userlist-tab" data-bs-toggle="pill" data-bs-target="#v-pills-userlist" type="button" role="tab" aria-controls="v-pills-userlist" aria-selected="true">
+                    User List
+                  </button>
+                  <button class="nav-link w-100" id="v-pills-scheduledhours-tab" data-bs-toggle="pill" data-bs-target="#v-pills-scheduledhours" type="button" role="tab" aria-controls="v-pills-scheduledhours" aria-selected="false">
+                    Scheduled Hours
+                  </button>
+                  <!-- <button class="nav-link w-100" id="v-pills-timeoff-tab" data-bs-toggle="pill" data-bs-target="#v-pills-timeoff" type="button" role="tab" aria-controls="v-pills-timeoff" aria-selected="false">
+                    Time Off
+                  </button> -->
+                </div>
+              </div>
+              <div class="col-lg-10">
+                <div class="tab-content" id="v-pills-tabContent">
+                  <div class="tab-pane fade show active text-dark" id="v-pills-userlist" role="tabpanel" aria-labelledby="v-pills-userlist-tab">
+                    <div class="card-body mb-3">
+                      <div class="d-flex justify-content-end mb-2">
+                        <button type="button" class="btn btn-primary btn-sm" @click="showAddUserModal"><font-awesome-icon :icon="['fa', 'plus']" class="me-1" />Add User</button>
                       </div>
-                      <div class="modal-body" style="font-size:12px">
-                        
-                          <table class="w-100">
-                            <tr>
-                              <td colspan="4">
-                                <div>
-                                  <label class="form-label"><strong>Personal Info</strong></label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="First Name" v-model="selectedUser.user_firstname" name="firstname"></td>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="Middle Name" v-model="selectedUser.user_middlename" name="middlename"></td>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="Last Name" v-model="selectedUser.user_lastname" name="lastname"></td>
-                              <td style="width:60px"><input class="form-control form-control-sm" type="text" placeholder="Suffix" v-model="selectedUser.user_suffix" name="suffix"></td>
-                            </tr>
-                            <tr>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="Contact Number" v-model="selectedUser.user_contact_number" name="contact_number"></td>
-                            </tr>
-                            <tr>
-                              <td colspan="4">
-                                <div class="mt-3">
-                                  <label class="form-label">User Avatar URL</label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="4">
-                                <input class="form-control form-control-sm" type="text" placeholder="Avatar" v-model="selectedUser.user_avatar" name="avatar">
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="4">
-                                <div class="mt-3">
-                                  <label class="form-label">Birth Date</label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="1">
-                                <input class="form-control form-control-sm" type="date" placeholder="Birthday" v-model="selectedUser.user_birthday" name="birthday">
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="4">
-                                <div class="mb-3 mt-3">
-                                  <label for="exampleFormControlTextarea1" class="form-label">Current Address</label>
-                                  <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="selectedUser.user_current_address" name="address"></textarea>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="4">
-                                <div>
-                                  <label class="form-label"><strong>Company Info</strong></label>
-                                </div>
-                              </td>
-                            </tr>
-                          </table>
-                          <table class="w-100">
-                            <tr>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="maksdts email" v-model="selectedUser.user_email" name="email"></td>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="Company ID#" v-model="selectedUser.user_id_number" name="id_number"></td>
-                              <td><input class="form-control form-control-sm" type="text" placeholder="Salary (monthly)" v-model="selectedUser.user_salary" default="0" name="salary"></td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example" v-model="selectedUser.user_level" name="level">
-                                  <option value="1">Select user type</option>
-                                  <option value="1">User</option>
-                                  <option value="2">HR Manager</option>
-                                  <option value="3">Super Admin</option>
-                                </select>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="1">
-                                <div class="mt-3">
-                                  <label class="form-label">Time in schedule (24hour)</label>
-                                </div>
-                              </td>
-                              <td colspan="1">
-                                <div class="mt-3">
-                                  <label class="form-label">Time out schedule (24hour)</label>
-                                </div>
-                              </td>
-                              <td colspan="2">
-                                <div class="mt-3">
-                                  <label class="form-label">Date hired</label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="1">
-                                <input class="form-control form-control-sm" type="text" placeholder="Time in" v-model="selectedUser.user_schedule_in" name="schedule_in">
-                              </td>
-                              <td colspan="1">
-                                <input class="form-control form-control-sm" type="text" placeholder="Time out" v-model="selectedUser.user_schedule_out" name="schedule_out">
-                              </td>
-                              <td colspan="1">
-                                <input class="form-control form-control-sm" type="date" placeholder="Date hired" v-model="selectedUser.user_datehired" name="datehired">
-                              </td>
-                            </tr>
-                          </table>
-                          <br/> <br/>
-                          <span><strong>Contribution Info</strong></span>
-                          <table class="w-100">
-                            <tr>
-                              <td>
-                                <div>
-                                  <label class="form-label">SSS #</label>
-                                </div>
-                              </td>
-                              <td>
-                                <div>
-                                  <label class="form-label">Pag-ibig #</label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <input class="form-control form-control-sm" type="text" placeholder="SSS" v-model="selectedUser.user_sssnum" name="sssnum">
-                              </td>
-                              <td>
-                                <input class="form-control form-control-sm" type="text" placeholder="PAG-IBIG" v-model="selectedUser.user_pagibignum" name="pagibignum">
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="mt-3">
-                                  <label class="form-label">TIN #</label>
-                                </div>
-                              </td>
-                              <td>
-                                <div class="mt-3">
-                                  <label class="form-label">Philhealth #</label>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <input class="form-control form-control-sm" type="text" placeholder="TIN" v-model="selectedUser.user_tin" name="tin">
-                              </td>
-                              <td>
-                                <input class="form-control form-control-sm" type="text" placeholder="Philhealth" v-model="selectedUser.user_philhealthnum" name="philhealthnum">
-                              </td>
-                            </tr>
-                          </table>
-                      </div>
-                      <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit">Save</button>
-                        <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
-                      </div> 
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col" style="width:40px"></th>
+                            <th scope="col">Users</th>
+                            <th scope="col">ID #</th>
+                            <th scope="col">Job Description</th>
+                            <th scope="col">User Group</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="user in userData" :key="user.id">
+                            <td class="d-flex flex-row-reverse"><img :src="user.user_avatar" style="height:30px; width:30px" class="rounded-circle"/></td>
+                            <td>{{user.user_firstname}} {{user.user_middlename}} {{user.user_lastname}}</td>
+                            <td>{{user.user_id_number}}</td>
+                            <td>{{user.user_jobdescription}}</td>
+                            
+                            <td>
+                              <span v-if="user.user_level == '1'" class="badge rounded-pill bg-secondary">User</span>
+                              <span v-if="user.user_level == '2'" class="badge rounded-pill bg-info">HR Manager</span>
+                              <span v-if="user.user_level == '3'" class="badge rounded-pill bg-primary">Super Admin</span>
+                            </td>
+                            <td>{{user.user_email}}</td>
+                            <td>
+                              <button type="button" class="btn btn-light btn-sm me-2" id="editbutton" @click="showEditModal(user)">
+                              <font-awesome-icon :icon="['fa', 'pen']" class="" /></button>
+                              <button type="button" class="btn btn-light btn-sm" id="resignbutton">
+                              <font-awesome-icon :icon="['fa', 'ban']" class="" /></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
+                  <div class="tab-pane fade text-dark" id="v-pills-scheduledhours" role="tabpanel" aria-labelledby="v-pills-scheduledhours-tab">
+                     <div class="card-body mb-3">
+                      <div class="d-flex justify-content-end mb-2">
+                        <input type="date" class="form-control" v-model="selectedDate">
+                      </div>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col" style="width:40px"></th>
+                            <th scope="col">Users</th>
+                            <th scope="col">Time In</th>
+                            <th scope="col">Time Out</th>
+                            <th scope="col">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="user in userData" :key="user.id">
+                            <td class="d-flex flex-row-reverse"><img :src="user.user_avatar" style="height:30px; width:30px" class="rounded-circle"/></td>
+                            <td>{{user.user_firstname}} {{user.user_middlename}} {{user.user_lastname}}</td>
+                            <td><span v-if="user.timein">{{user.timein}}</span><span class="fst-italic badge bg-secondary fw-normal" v-else>No TimeIn</span></td>
+                            <td><span v-if="user.timeout">{{user.timeout}}</span><span class="fst-italic badge bg-secondary fw-normal" v-else>No TimeOut</span></td>
+                            <td>
+                              <button type="button" class="btn btn-light btn-sm me-2" id="edittime" @click="editTimeInAndOut(user)">
+                              <font-awesome-icon :icon="['fa', 'pen']" class="" /></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <!--<div class="tab-pane fade text-dark" id="v-pills-timeoff" role="tabpanel" aria-labelledby="v-pills-timeoff-tab">...</div> -->
                 </div>
-              </form>
-
-              
+              </div>
             </div>
+
         </div>
+
+      <!-- Scrollable modal -->
+      <form @submit="updateUser">
+        <div class="modal fade" id="editUserModal">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalToggleLabel2">Edit | <strong>{{selectedUser.user_firstname}}</strong></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="font-size:12px">
+                
+                  <table class="w-100">
+                    <tr>
+                      <td colspan="4">
+                        <div>
+                          <label class="form-label"><strong>Personal Info</strong></label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="First Name" v-model="selectedUser.user_firstname" name="firstname"></td>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Middle Name" v-model="selectedUser.user_middlename" name="middlename"></td>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Last Name" v-model="selectedUser.user_lastname" name="lastname"></td>
+                      <td style="width:60px"><input class="form-control form-control-sm" type="text" placeholder="Suffix" v-model="selectedUser.user_suffix" name="suffix"></td>
+                    </tr>
+                    <tr>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Contact Number" v-model="selectedUser.user_contact_number" name="contact_number"></td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div class="mt-3">
+                          <label class="form-label">User Avatar URL</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <input class="form-control form-control-sm" type="text" placeholder="Avatar" v-model="selectedUser.user_avatar" name="avatar">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div class="mt-3">
+                          <label class="form-label">Birth Date</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="date" placeholder="Birthday" v-model="selectedUser.user_birthday" name="birthday">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div class="mb-3 mt-3">
+                          <label for="exampleFormControlTextarea1" class="form-label">Current Address</label>
+                          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="selectedUser.user_current_address" name="address"></textarea>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div>
+                          <label class="form-label"><strong>Company Info</strong></label>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  <table class="w-100">
+                    <tr>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="maksdts email" v-model="selectedUser.user_email" name="email"></td>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Company ID#" v-model="selectedUser.user_id_number" name="id_number"></td>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="maksdts email" v-model="selectedUser.user_jobdescription" name="email">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label=".form-select-sm example" v-model="selectedUser.user_level" name="level">
+                          <option value="1">User</option>
+                          <option value="2">HR Manager</option>
+                          <option value="3">Super Admin</option>
+                        </select>
+                      </td>
+                      <td>
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="1">
+                        <div class="mt-3">
+                          <label class="form-label">Time in schedule (24hour)</label>
+                        </div>
+                      </td>
+                      <td colspan="1">
+                        <div class="mt-3">
+                          <label class="form-label">Time out schedule (24hour)</label>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="mt-3">
+                          <label class="form-label">Date hired</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="text" placeholder="Time in" v-model="selectedUser.user_schedule_in" name="schedule_in">
+                      </td>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="text" placeholder="Time out" v-model="selectedUser.user_schedule_out" name="schedule_out">
+                      </td>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="date" placeholder="Date hired" v-model="selectedUser.user_datehired" name="datehired">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Salary (/monthly)</label>
+                          <input class="form-control form-control-sm" type="text" placeholder="Salary (monthly)" v-model="selectedUser.user_salary" default="0" name="salary">
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">
+                        <hr/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div>
+                          <label class="form-label">Vacation Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Vacation Leave" v-model="selectedUser.user_vl">
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <label class="form-label">Sick Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Sick Leave" v-model="selectedUser.user_sl">
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <label class="form-label">Emergency Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Emergency Leave" v-model="selectedUser.user_el">
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Birthday Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Birthday Leave" v-model="selectedUser.user_bl">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Maternity Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Vacation Leave" v-model="selectedUser.user_ml">
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  <br/> <br/>
+                  <span><strong>Contribution Info</strong></span>
+                  <table class="w-100">
+                    <tr>
+                      <td>
+                        <div>
+                          <label class="form-label">SSS #</label>
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <label class="form-label">Pag-ibig #</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="SSS" v-model="selectedUser.user_sssnum" name="sssnum">
+                      </td>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="PAG-IBIG" v-model="selectedUser.user_pagibignum" name="pagibignum">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">TIN #</label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Philhealth #</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="TIN" v-model="selectedUser.user_tin" name="tin">
+                      </td>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="Philhealth" v-model="selectedUser.user_philhealthnum" name="philhealthnum">
+                      </td>
+                    </tr>
+                  </table>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">Save</button>
+                <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- add new User Modal -->
+      <form @submit="addNewUser">
+        <div class="modal fade" id="addUserModal">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Add new user</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="font-size:12px">
+                
+                  <table class="w-100">
+                    <tr>
+                      <td colspan="4">
+                        <div>
+                          <label class="form-label"><strong>Personal Info</strong></label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="First Name" v-model="newFirstName" name="firstname"></td>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Middle Name" v-model="newMiddleName" name="middlename"></td>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Last Name" v-model="newLastName" name="lastname"></td>
+                      <td style="width:60px"><input class="form-control form-control-sm" type="text" placeholder="Suffix" v-model="newSuffix" name="suffix"></td>
+                    </tr>
+                    <tr>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Contact Number" v-model="newContactNumber" name="contact_number"></td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div class="mt-3">
+                          <label class="form-label">User Avatar URL</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <input class="form-control form-control-sm" type="text" placeholder="Avatar" v-model="newAvatar" name="avatar">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div class="mt-3">
+                          <label class="form-label">Birth Date</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="date" placeholder="Birthday" v-model="newBirthdate" name="birthday">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div class="mb-3 mt-3">
+                          <label for="exampleFormControlTextarea1" class="form-label">Current Address</label>
+                          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="newAddress" name="address"></textarea>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <div>
+                          <label class="form-label"><strong>Company Info</strong></label>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  <table class="w-100">
+                    <tr>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="maksdts email" v-model="newEmail" name="email"></td>
+                      <td><input class="form-control form-control-sm" type="text" placeholder="Company ID#" v-model="newIdNumber" name="id_number"></td>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="Job Description" v-model="newJobDescription" name="email">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label=".form-select-sm example" v-model="newUserType" name="level" required>
+                          <option value="1">User</option>
+                          <option value="2">HR Manager</option>
+                          <option value="3">Super Admin</option>
+                        </select>
+                      </td>
+                      <td>
+                        
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="1">
+                        <div class="mt-3">
+                          <label class="form-label">Time in schedule (24hour)</label>
+                        </div>
+                      </td>
+                      <td colspan="1">
+                        <div class="mt-3">
+                          <label class="form-label">Time out schedule (24hour)</label>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="mt-3">
+                          <label class="form-label">Date hired</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="text" placeholder="Time in" v-model="newTimeIn" name="schedule_in">
+                      </td>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="text" placeholder="Time out" v-model="newTimeOut" name="schedule_out">
+                      </td>
+                      <td colspan="1">
+                        <input class="form-control form-control-sm" type="date" placeholder="Date hired" v-model="newDateHired" name="datehired">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Salary (/monthly)</label>
+                          <input class="form-control form-control-sm" type="text" placeholder="Salary (monthly)" v-model="newSalary" default="0" name="salary">
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">
+                        <hr/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div>
+                          <label class="form-label">Vacation Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Vacation Leave" v-model="newVL">
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <label class="form-label">Sick Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Sick Leave" v-model="newSL">
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <label class="form-label">Emergency Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Emergency Leave" v-model="newEL">
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Birthday Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Birthday Leave" v-model="newBL">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Maternity Leave</label>
+                          <input class="form-control form-control-sm" type="number" placeholder="Vacation Leave" v-model="newML">
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  <br/> <br/>
+                  <span><strong>Contribution Info</strong></span>
+                  <table class="w-100">
+                    <tr>
+                      <td>
+                        <div>
+                          <label class="form-label">SSS #</label>
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <label class="form-label">Pag-ibig #</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="SSS" v-model="newSSS" name="sssnum">
+                      </td>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="PAG-IBIG" v-model="newPagibig" name="pagibignum">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">TIN #</label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="mt-3">
+                          <label class="form-label">Philhealth #</label>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="TIN" v-model="newTin" name="tin">
+                      </td>
+                      <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="Philhealth" v-model="newPhilhealth" name="philhealthnum">
+                      </td>
+                    </tr>
+                  </table>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">Save</button>
+                <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <form @submit="updateTimeinOut">
+        <div class="modal fade" id="editTimeInOut">
+          <div class="modal-dialog modal-md modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Edit Timein & Timout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="font-size:15px">
+                <table class="table">
+                  <tbody>
+                  <tr style="border-style: hidden">
+                    <td>Time In</td>
+                    <td><input class="form-control form-control-md" type="text" v-model="selectedUser.timein" maxlength="5" placeholder="00:00" minlength="5"></td>
+                  </tr>
+                  <tr style="border-style: hidden">
+                    <td>Time Out</td>
+                    <td><input class="form-control form-control-md" type="text" v-model="selectedUser.timeout" maxlength="5" placeholder="00:00" minlength="5"></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">Save</button>
+                <button class="btn btn-light" type="button" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </form>
+
         <!-- <font-awesome-icon :icon="['fa', 'hourglass-end']" class="me-2 text-secondary" /> -->
     </div>
     <ToastComponent />
