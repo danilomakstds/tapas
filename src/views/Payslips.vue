@@ -39,12 +39,9 @@
                                                                 {{user.fullname}}
                                                             </label>
                                                         </div>
-                                                        <div class="d-none">
-                                                            asdf
-                                                        </div>
                                                     </td>
                                                     <td v-if="user.user_level < 3">
-                                                        <button type="button" class="btn btn-primary btn-sm" @click="viewPayslip(user)">
+                                                        <button type="button" class="btn btn-primary btn-sm" @click="viewPayslip(user)" :disabled="!payperiodStart || !payperiodEnd">
                                                         <font-awesome-icon :icon="['fa-solid', 'eye']"/></button>
                                                     </td>
                                                 </tr>
@@ -160,10 +157,92 @@
                                 </div>
                             </div>
                             <div class="col-md-8 bg-light">
+                                <div class="overflow-hidden pe-3">
+                                <button type="button" class="btn btn-success mt-2 btn-sm float-end " @click="printPayslip">
+                                <font-awesome-icon :icon="['fa-solid', 'print']" class="me-2"/>
+                                Print</button>
+                                </div>
+
+                                <div class="row m-1 mt-2">
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                Working Hours
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Date</th>
+                                                            <th scope="col">Time In/Out</th>
+                                                            <th scope="col">Total hours</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="timeinout in userDetails.timeinOut" :key="timeinout.date">
+                                                            <td>{{timeinout.date}}</td>
+                                                            <td>{{timeinout.timein}} - {{timeinout.timeout}}</td>
+                                                            <td>{{timeinout.hours}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <span class="float-end" v-if="userDetails.totalHoursWorked">WORKING HOURS : <strong>{{userDetails.totalHoursWorked}} hours</strong></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Holiday Pay
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Date</th>
+                                                            <th scope="col">Holiday</th>
+                                                            <th scope="col">Total hours</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="hol in userDetails.holidays" :key="hol.date">
+                                                            <td>{{hol.date}}</td>
+                                                            <td>{{hol.name}}</td>
+                                                            <td>{{hol.hours}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <span class="float-end" v-if="userDetails.regularHilidayHours">REGULAR HOLIDAY HOURS : <strong>{{userDetails.regularHilidayHours}} hours</strong></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                Paid Leaves
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Date</th>
+                                                            <th scope="col">About</th>
+                                                            <th scope="col">Total hours</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="leave in userDetails.leaves" :key="leave.date">
+                                                            <td>{{leave.date}}</td>
+                                                            <td>{{leave.name}}</td>
+                                                            <td>{{leave.hours}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="payslip-viewer p-3">
-                                    <button type="button" class="btn btn-secondary mt-2 btn-sm" @click="printPayslip">
-                                        <font-awesome-icon :icon="['fa-solid', 'print']" class="me-2"/>
-                                        Print</button>
                                     <table class="w-100 mt-2 bg-white" style="font-size:15px" id="payslip-table">
                                         <tr> 
                                             <td colspan="7">
@@ -178,14 +257,15 @@
                                             </td>
                                             <td colspan="2">
                                                 <div class="d-flex justify-content-center">
-                                                    <img src="https://scontent.fceb3-1.fna.fbcdn.net/v/t1.6435-9/163649932_120786370008950_9068433196374269386_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=A3PYQQ__ueYAX-TbHCW&_nc_ht=scontent.fceb3-1.fna&oh=00_AT_5cN0AX3rOyHAk5PPACjm7c8Lq9s5kDhNi3vn9utt5VQ&oe=6253D1B3" style="height:100px;"/>
+                                                    <img src="../assets/images/makslogo.jpeg" style="height:100px;"/>
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr> 
                                             <td colspan="7"></td>
                                             <td colspan="2">
-                                                BASIC PAY : {{userDetails.ratePerHour}}
+                                                BASIC PAY : {{(userDetails.ratePerHour * userDetails.totalHoursWorked) +
+                                                (userDetails.regularHilidayHours * userDetails.ratePerHour)}}
                                             </td>
                                         </tr>
                                         <tr> 
@@ -197,7 +277,7 @@
                                         </tr>
                                         <tr> 
                                             <td colspan="3"> STATUS : <strong>REGULAR</strong></td>
-                                            <td colspan="4"> WORKING HOURS : <strong>80</strong> </td>
+                                            <td colspan="4"> WORKING HOURS : <strong>{{this.userDetails.totalHoursWorked}}</strong> </td>
                                             <td colspan="2"></td>
                                         </tr>
                                         <tr> 
@@ -253,7 +333,7 @@
                                             <td></td>
                                             <td></td>
                                             <td>HOLIDAY PAY</td>
-                                            <td>0.00</td>
+                                            <td>{{userDetails.regularHilidayHours*userDetails.ratePerHour}}</td>
                                             <td>PAG-IBIG</td>
                                             <td>0.00</td>
                                             <td colspan="2" style="border-bottom:0px; border-top: 0px">

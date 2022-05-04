@@ -192,15 +192,13 @@ export default {
 
                             /* get Scheduled out */
                             var reg = /\s\d\d:\d\d:\d\d\s/
-                            if (e.timeout) {
-                                if (e.projected_timeout) {
-                                    var scheduledOut = e.timeout.replace(reg, " " + e.projected_timeout + ":00 ");
-                                    /* get Scheduled out */
-                                    /* use scheduled out as timeout if user exceeds scheduled out */
-                                    if ((new Date(scheduledOut)).getTime() < (new Date(e.timeout)).getTime()) {
-                                        ot = moment(e.timeout).diff(moment(scheduledOut), 'minutes');
-                                        //console.log(ot);
-                                    }
+                            if (e.timeout && e.projected_timeout) {
+                                var scheduledOut = e.timeout.replace(reg, " " + e.projected_timeout + ":00 ");
+                                /* get Scheduled out */
+                                /* use scheduled out as timeout if user exceeds scheduled out */
+                                if ((new Date(scheduledOut)).getTime() < (new Date(e.timeout)).getTime()) {
+                                    ot = moment(e.timeout).diff(moment(scheduledOut), 'minutes');
+                                    //console.log(ot);
                                 }
                             }
 

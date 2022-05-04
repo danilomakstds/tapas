@@ -3,9 +3,10 @@ import Header from '@/components/Header.vue'
 import SideNav from '@/components/SideNav.vue'
 import { mapState } from 'vuex'
 import axios from "axios"
-// import moment from 'moment'
-// import Swal from 'sweetalert2'
+import moment from 'moment'
+import Swal from 'sweetalert2'
 import SettingsConstants from '../../assets/constants/settings.constants'
+import Constants from '../../assets/constants/app.constants'
 import store from '../../store'
 import { Tab } from 'bootstrap'
 export default {
@@ -58,11 +59,13 @@ export default {
                             axios.get(SettingsConstants.BASE_URL + '/deduction-adjustments.rest.php?type=tax-bracket', { crossdomain: true })
                                 .then(function (response) {
                                     if (response.data) {
-                                        response.data.forEach(function (taxBracket) {
-                                            if (parseFloat(employee.user_salary) >= parseFloat(taxBracket.bracket_start) && parseFloat(employee.user_salary) <= parseFloat(taxBracket.bracket_end)) {
-                                                employee.amountTaxDeduction = parseFloat(taxBracket.base_tax) + ((parseFloat(employee.user_salary) - parseFloat(taxBracket.bracket_start)) * parseFloat(taxBracket.percentage_over));
-                                            }
-                                        });
+                                        if (response.data.id) {
+                                            response.data.forEach(function (taxBracket) {
+                                                if (parseFloat(employee.user_salary) >= parseFloat(taxBracket.bracket_start) && parseFloat(employee.user_salary) <= parseFloat(taxBracket.bracket_end)) {
+                                                    employee.amountTaxDeduction = parseFloat(taxBracket.base_tax) + ((parseFloat(employee.user_salary) - parseFloat(taxBracket.bracket_start)) * parseFloat(taxBracket.percentage_over));
+                                                }
+                                            });
+                                        }
                                     }
                                 }.bind(employee));
 
@@ -71,15 +74,143 @@ export default {
                             employee.checked = true;
                             employee.ratePerDay = (employee.user_salary / 20);
                             employee.ratePerHour = (employee.user_salary / 20) / 8;
-                            employee.salaryAfterDeductions;
+                            employee.salaryAfterDeductions = 0;
                         });
                         console.log(this.employees);
                     }
                 }.bind(this));
         },
         viewPayslip: function (userDetails) {
-            this.userDetails = userDetails;
-            this.isUserSelected = true;
+            var reg = /\s\d\d:\d\d:\d\d\s/;
+            var starDate = new Date(this.payperiodStart+' 00:00:00');
+            var endDate = new Date(this.payperiodEnd+' 23:59:00');
+            //var formatSD = null;
+            //var formatED = null;
+            //var startQuery = (moment(this.payperiodStart).format('ddd') + ' ' + moment(this.payperiodStart).format(formatSD));
+            //var endQuery = (moment(this.payperiodEnd).format('ddd') + ' ' + moment(this.payperiodEnd).format(formatED));
+            if(endDate > starDate){
+                this.userDetails = userDetails;
+                this.userDetails.totalHoursWorked = 0;
+                this.userDetails.specialNonWorkingHours = 0;
+                this.userDetails.regularHilidayHours = 0;
+                this.userDetails.totalLeaveHours = 0;
+                this.userDetails.timeinOut = [];
+                this.userDetails.holidays = [];
+                this.userDetails.leaves = [];
+                this.isUserSelected = true;
+                axios.get(SettingsConstants.BASE_URL + '/get-time-in-out.rest.php?type=gettimeinout&userId=' + this.userDetails.id, { crossdomain: true })
+                .then(function (response) {
+                    var validDates = [];
+                    if (response.data) {
+                        response.data.forEach (function (date, idx, array) {
+                            var check = new Date(date.timein);
+                            if (check <= endDate && check >= starDate) {
+                                var start = null, minutes = null, scheduledIn = null, scheduledOut = null;
+                                var end = null;
+                                scheduledOut = date.timeout.replace(reg, " " + date.projected_timeout + ":00 ");
+                                scheduledIn = date.timein.replace(reg, " " + date.projected_timein + ":00 ");
+                                if (date.projected_timeout && date.projected_timein) {
+                                    if ((new Date(date.timein)).getTime() > (new Date(scheduledIn)).getTime()) {
+                                        var diff = moment(date.timein).diff(moment(scheduledIn), 'minutes');
+                                        if (diff < 15) { //if less than 15 minutes
+                                            start = moment(scheduledIn);
+                                        } else {
+                                            start = moment(date.timein);
+                                        }
+                                    } else {
+                                        start = moment(date.timein);
+                                    }
+                                    (new Date(date.timeout)).getTime() > (new Date(scheduledOut)).getTime() ? end = moment(scheduledOut) : end = moment(date.timeout);
+                                } else {
+                                    start = start = moment(date.timein);
+                                    end = moment(date.timeout);
+                                }
+                                minutes = end.diff(start, 'minutes');
+                                var hours = (minutes/60) > 8? 8 : (minutes/60);
+                                this.userDetails.totalHoursWorked += parseFloat(parseFloat(hours).toFixed(2));
+                                validDates.push({
+                                    'timein': moment(date.timein).format('LT'),
+                                    'timeout': moment(date.timeout).format('LT'),
+                                    'date': moment(date.timein).format('L'),
+                                    'hours': parseFloat(hours).toFixed(2)
+                                });
+                            }
+                            if (idx === array.length - 1){ 
+                                this.userDetails.timeinOut = validDates;
+                                // this.userDetails.timeinOut.forEach(function (){
+                                    
+                                // });
+                            }
+                        }.bind(this));
+                    }
+                }.bind(this));
+
+                axios.get(SettingsConstants.BASE_URL + '/get-all-holidays.rest.php', { crossdomain: true })
+                .then(function (response) {
+                    JSON.parse(response.data[0].JSON).response.holidays.forEach(function (event) {
+                        var check = new Date(event.date.iso);
+                        if (check <= endDate && check >= starDate && event.holidayType == 'Regular' && check.getDay() != 6 && check.getDay() != 0) {
+                            this.userDetails.regularHilidayHours += 8;
+                            this.userDetails.holidays.push({
+                                'date': event.date.iso,
+                                'name': event.name,
+                                'hours': 8
+                            });
+                            //console.log(event);
+                        }
+                    }.bind(this));
+                    store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
+                }.bind(this));
+
+
+                axios.get(SettingsConstants.BASE_URL + '/leave.rest.php?type=all-per-user&userId=' + this.userDetails.id, { crossdomain: true })
+                    .then(function (response) {
+                        if (response.data) {
+                            response.data.forEach(function (myLeaves) {
+                                var check = new Date(myLeaves.timestart);
+                                if (check <= endDate && check >= starDate) {
+                                    switch (myLeaves.leave_type) {
+                                    case Constants.LEAVE_TYPES.SICK:
+                                        myLeaves.leavetitle = 'Sick Leave';
+                                        break;
+                                    case Constants.LEAVE_TYPES.VACATION:
+                                        myLeaves.leavetitle = 'Vacation Leave';
+                                        break;
+                                    case Constants.LEAVE_TYPES.EMERGENCY:
+                                        myLeaves.leavetitle = 'Emergency Leave';
+                                        break;
+                                    case Constants.LEAVE_TYPES.MATERNITY:
+                                        myLeaves.leavetitle = 'Maternity Leave';
+                                        break;
+                                    case Constants.LEAVE_TYPES.BIRTHDAY:
+                                        myLeaves.leavetitle = 'Birthday Leave';
+                                        break;
+                                    }
+                                    this.userDetails.totalLeaveHours += parseInt(myLeaves.totalhours);
+                                    this.userDetails.leaves.push({
+                                        'date': moment(myLeaves.timestart).format('L')+' '+moment(myLeaves.timestart).format('LT'),
+                                        'name': myLeaves.leavetitle,
+                                        'hours': myLeaves.totalhours
+                                    });
+                                }
+                            }.bind(this));
+                            store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
+                        }
+                    }.bind(this));
+            
+
+
+
+            } else {
+                Swal.fire(
+                'Date error!',
+                'Invalid dates selected',
+                'error'
+                )
+            }
+            
+        },
+        getTotalHourse: function () {
         },
         generatePayslip: function () {
 
