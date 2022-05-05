@@ -13,19 +13,29 @@ export default {
     name: 'Payslips',
     computed: mapState([
         'sessionData',
-        'lastSelectedView'
+        'lastSelectedView',
+        'selectedPayPeriod'
     ]),
     watch: {
+        //viewPayslip
+        selectedPeriod: function (newVal) {
+            store.commit('SET_SELECTED_PAY_PERIOD', newVal);
+            //this.getAllEmployees();
+            //location.reload();
+        }
     },
     data() {
         return {
             employees: [],
+            employeeDeduction: null,
             payperiodStart: null,
             payperiodEnd: null,
-            userDetails: [],
+            userDetails: null,
+            userDetailsTemp: [],
             isUserSelected: false,
+            is13thMonthSelected: false,
             allowanceDeduction: [],
-            selectedPeriod: 15
+            selectedPeriod: null
         }
     },
     components: {
@@ -53,9 +63,11 @@ export default {
                                             employee.amountPagibigMp2Deduction = parseFloat(ad.amount_pagibig_mp2);
                                             employee.amountPhilhealthDeduction = parseFloat(ad.amount_philhealth);
                                             employee.amountSSSDeduction = parseFloat(ad.amount_sss);
-                                        });
+                                            employee.amountLoanDeduction = parseFloat(ad.amount_loan);
+                                            employee.amountTaxDeduction = parseFloat(ad.amount_tax);
+                                        }.bind(this));
                                     }
-                                }.bind(employee));
+                                }.bind(employee).bind(this));
                             axios.get(SettingsConstants.BASE_URL + '/deduction-adjustments.rest.php?type=tax-bracket', { crossdomain: true })
                                 .then(function (response) {
                                     if (response.data) {
@@ -91,13 +103,16 @@ export default {
             if(endDate > starDate){
                 this.userDetails = userDetails;
                 this.userDetails.totalHoursWorked = 0;
+                this.userDetails.totalOTHours = 0;
                 this.userDetails.specialNonWorkingHours = 0;
                 this.userDetails.regularHilidayHours = 0;
                 this.userDetails.totalLeaveHours = 0;
                 this.userDetails.timeinOut = [];
                 this.userDetails.holidays = [];
                 this.userDetails.leaves = [];
+                this.userDetails.ots = [];
                 this.isUserSelected = true;
+
                 axios.get(SettingsConstants.BASE_URL + '/get-time-in-out.rest.php?type=gettimeinout&userId=' + this.userDetails.id, { crossdomain: true })
                 .then(function (response) {
                     var validDates = [];
@@ -159,7 +174,6 @@ export default {
                             //console.log(event);
                         }
                     }.bind(this));
-                    store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
                 }.bind(this));
 
 
@@ -170,35 +184,48 @@ export default {
                                 var check = new Date(myLeaves.timestart);
                                 if (check <= endDate && check >= starDate) {
                                     switch (myLeaves.leave_type) {
-                                    case Constants.LEAVE_TYPES.SICK:
-                                        myLeaves.leavetitle = 'Sick Leave';
-                                        break;
-                                    case Constants.LEAVE_TYPES.VACATION:
-                                        myLeaves.leavetitle = 'Vacation Leave';
-                                        break;
-                                    case Constants.LEAVE_TYPES.EMERGENCY:
-                                        myLeaves.leavetitle = 'Emergency Leave';
-                                        break;
-                                    case Constants.LEAVE_TYPES.MATERNITY:
-                                        myLeaves.leavetitle = 'Maternity Leave';
-                                        break;
-                                    case Constants.LEAVE_TYPES.BIRTHDAY:
-                                        myLeaves.leavetitle = 'Birthday Leave';
-                                        break;
+                                        case Constants.LEAVE_TYPES.SICK:
+                                            myLeaves.leavetitle = 'Sick Leave';
+                                            break;
+                                        case Constants.LEAVE_TYPES.VACATION:
+                                            myLeaves.leavetitle = 'Vacation Leave';
+                                            break;
+                                        case Constants.LEAVE_TYPES.EMERGENCY:
+                                            myLeaves.leavetitle = 'Emergency Leave';
+                                            break;
+                                        case Constants.LEAVE_TYPES.MATERNITY:
+                                            myLeaves.leavetitle = 'Maternity Leave';
+                                            break;
+                                        case Constants.LEAVE_TYPES.BIRTHDAY:
+                                            myLeaves.leavetitle = 'Birthday Leave';
+                                            break;
                                     }
                                     this.userDetails.totalLeaveHours += parseInt(myLeaves.totalhours);
                                     this.userDetails.leaves.push({
-                                        'date': moment(myLeaves.timestart).format('L')+' '+moment(myLeaves.timestart).format('LT'),
+                                        'date': moment(myLeaves.timestart).format('L') + ' ' + moment(myLeaves.timestart).format('LT'),
                                         'name': myLeaves.leavetitle,
                                         'hours': myLeaves.totalhours
                                     });
                                 }
                             }.bind(this));
-                            store.commit('SET_FULL_CALENDAR_PROPS', this.calendarOptions);
                         }
                     }.bind(this));
-            
 
+                axios.get(SettingsConstants.BASE_URL + '/overtime.rest.php?type=getall_approved_byuserid&userId=' + this.userDetails.id, { crossdomain: true })
+                    .then(function (response) {
+                        if (response.data) {
+                            response.data.forEach(function (ots) {
+                                var check = new Date(ots.date);
+                                if (check <= endDate && check >= starDate) {
+                                    this.userDetails.totalOTHours += (parseInt(ots.minutes) / 60);
+                                    this.userDetails.ots.push({
+                                        'date': moment(ots.date).format('L') + ' ' + moment(ots.date).format('LT'),
+                                        'minutes': ots.minutes + ' minutes'
+                                    });
+                                }
+                            }.bind(this));
+                        }
+                    }.bind(this));
 
 
             } else {
@@ -236,6 +263,7 @@ export default {
         }
     },
     mounted() {
+        this.selectedPeriod = this.selectedPayPeriod;
         if (this.lastSelectedView) {
             var someTabTriggerEl = document.querySelector('#' + this.lastSelectedView);
             if (someTabTriggerEl) {

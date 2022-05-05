@@ -1,7 +1,7 @@
 
 
-const BASE_URL = 'http://127.0.0.1/tpas-rest';
-//const BASE_URL = 'http://maksdtstpas.kinsta.cloud/tapas-rest';
+//const BASE_URL = 'http://127.0.0.1/tpas-rest';
+const BASE_URL = 'http://maksdtstpas.kinsta.cloud/tapas-rest';
 //const ROUTE_URL = '';
 //const ROUTE_URL = '/tapas-resources/dist';
 // const CONSUMER_KEY = 'ck_99b5a07a9b4f96d13f61ce018e098f9a0c6c5c9c';

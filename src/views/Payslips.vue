@@ -41,7 +41,7 @@
                                                         </div>
                                                     </td>
                                                     <td v-if="user.user_level < 3">
-                                                        <button type="button" class="btn btn-primary btn-sm" @click="viewPayslip(user)" :disabled="!payperiodStart || !payperiodEnd">
+                                                        <button type="button" class="btn btn-primary btn-sm" @click="viewPayslip(user)" :="!payperiodStart || !payperiodEnd">
                                                         <font-awesome-icon :icon="['fa-solid', 'eye']"/></button>
                                                     </td>
                                                 </tr>
@@ -77,7 +77,7 @@
                                             <hr/>
                                             <span>Adjustments</span>
                                             <div class="form-check mt-3 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="13month">
+                                                <input class="form-check-input" type="checkbox" value="" id="13month" v-model="is13thMonthSelected">
                                                 <label class="form-check-label" for="13month">
                                                     13TH MONTH
                                                 </label>
@@ -89,19 +89,19 @@
                                                 </label>
                                             </div>
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="paid-leaves" disabled checked>
+                                                <input class="form-check-input" type="checkbox" value="" id="paid-leaves" checked>
                                                 <label class="form-check-label" for="paid-leaves">
                                                     PAID LEAVES
                                                 </label>
                                             </div>
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="holiday-pay" disabled checked>
+                                                <input class="form-check-input" type="checkbox" value="" id="holiday-pay" checked>
                                                 <label class="form-check-label" for="holiday-pay">
                                                     HOLIDAY PAY
                                                 </label>
                                             </div>
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="adjustmentothers" :checked="selectedPeriod == userDetails.otherAdjustments" disabled>
+                                                <input class="form-check-input" type="checkbox" value="" id="adjustmentothers" :checked="selectedPeriod == userDetails.otherAdjustments" >
                                                 <label class="form-check-label" for="adjustmentothers">
                                                     OTHERS (2k)
                                                 </label>
@@ -111,37 +111,37 @@
                                             <hr/>
                                             <span>Deductions</span>
                                             <div class="form-check mt-3 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="tax" :checked="selectedPeriod == userDetails.taxDeduction" disabled>
+                                                <input class="form-check-input" type="checkbox" value="" id="tax" :checked="selectedPeriod == userDetails.taxDeduction" >
                                                 <label class="form-check-label" for="tax">
                                                     W/H TAX
                                                 </label>
                                             </div>
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="sss" :checked="selectedPeriod == userDetails.sssDeduction" disabled>
+                                                <input class="form-check-input" type="checkbox" value="" id="sss" :checked="selectedPeriod == userDetails.sssDeduction" >
                                                 <label class="form-check-label" for="sss">
                                                     SSS
                                                 </label>
                                             </div>
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="philhealth" :checked="selectedPeriod == userDetails.philhealthDeduction" disabled>
+                                                <input class="form-check-input" type="checkbox" value="" id="philhealth" :checked="selectedPeriod == userDetails.philhealthDeduction" >
                                                 <label class="form-check-label" for="philhealth">
                                                     PHILHEALTH
                                                 </label>
                                             </div>
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="pagibig" :checked="selectedPeriod == userDetails.pagibigDeduction" disabled>
+                                                <input class="form-check-input" type="checkbox" value="" id="pagibig" :checked="selectedPeriod == userDetails.pagibigDeduction" >
                                                 <label class="form-check-label" for="pagibig">
                                                     PAG-IBIG
                                                 </label>
                                             </div>
-                                            <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="tardiness" disabled checked>
+                                            <!-- <div class="form-check mt-1 ms-2">
+                                                <input class="form-check-input" type="checkbox" value="" id="tardiness" checked>
                                                 <label class="form-check-label" for="tardiness">
                                                     TARDINESS 
                                                 </label>
-                                            </div>
+                                            </div> -->
                                             <div class="form-check mt-1 ms-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="LOAN" :checked="selectedPeriod == userDetails.loanDeduction" disabled>
+                                                <input class="form-check-input" type="checkbox" value="" id="LOAN" :checked="selectedPeriod == userDetails.loanDeduction" >
                                                 <label class="form-check-label" for="LOAN">
                                                     LOAN 
                                                 </label>
@@ -163,7 +163,7 @@
                                 Print</button>
                                 </div>
 
-                                <div class="row m-1 mt-2">
+                                <div class="row m-1 mt-2" v-if="userDetails">
                                     <div class="col-md-6">
                                         <div class="card mb-4">
                                             <div class="card-header">
@@ -216,7 +216,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="card">
+                                        <div class="card mb-4">
                                             <div class="card-header">
                                                 Paid Leaves
                                             </div>
@@ -239,10 +239,79 @@
                                                 </table>
                                             </div>
                                         </div>
+
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                Deductions
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Name</th>
+                                                            <th scope="col">Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>W/H TAX</td>
+                                                            <td>{{(userDetails.taxDeduction == selectedPeriod) ? userDetails.amountTaxDeduction : '0'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>SSS</td>
+                                                            <td>{{(userDetails.sssDeduction == selectedPeriod) ? userDetails.amountSSSDeduction : '0'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>PAG-IBIG</td>
+                                                            <td>{{(userDetails.pagibigDeduction == selectedPeriod) ? userDetails.amountPagibigDeduction : '0'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>PAG-IBIG MP2</td>
+                                                            <td>{{(userDetails.pagibigDeduction == selectedPeriod) ? userDetails.amountPagibigMp2Deduction : '0'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>PHILHEALTH</td>
+                                                            <td>{{(userDetails.philhealthDeduction == selectedPeriod) ? userDetails.amountPhilhealthDeduction : '0'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>LOANS</td>
+                                                            <td>{{(userDetails.loanDeduction == selectedPeriod) ? userDetails.amountLoanDeduction : '0'}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>OTHERS</td>
+                                                            <td>0</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                Overtime Hours
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Date</th>
+                                                            <th scope="col">Total Minutes</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="ots in userDetails.ots" :key="ots.date">
+                                                            <td>{{ots.date}}</td>
+                                                            <td>{{ots.minutes}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <span class="float-end" v-if="userDetails.totalOTHours">TOTAL OVERTIME HOURS : <strong>{{Math.round(userDetails.totalOTHours * 100) / 100}} hours</strong></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
-                                <div class="payslip-viewer p-3">
+                                <div class="payslip-viewer p-3" v-if="userDetails">
                                     <table class="w-100 mt-2 bg-white" style="font-size:15px" id="payslip-table">
                                         <tr> 
                                             <td colspan="7">
@@ -265,14 +334,15 @@
                                             <td colspan="7"></td>
                                             <td colspan="2">
                                                 BASIC PAY : {{(userDetails.ratePerHour * userDetails.totalHoursWorked) +
-                                                (userDetails.regularHilidayHours * userDetails.ratePerHour)}}
+                                                (userDetails.regularHilidayHours * userDetails.ratePerHour) +
+                                                (userDetails.totalLeaveHours * userDetails.ratePerHour)}}
                                             </td>
                                         </tr>
                                         <tr> 
                                             <td colspan="3"> EMPLOYEE : <strong>{{userDetails.fullname}}</strong></td>
                                             <td colspan="4"> POSITION : <strong>{{userDetails.user_jobdescription}}</strong></td>
                                             <td colspan="2">
-                                                OVERTIME  : 0.00
+                                                OVERTIME  : {{(Math.round(userDetails.totalOTHours * 100) / 100) * (userDetails.ratePerHour * .3 + userDetails.ratePerHour)}}
                                             </td>
                                         </tr>
                                         <tr> 
@@ -289,19 +359,19 @@
                                             <td style="border-right: 0px">ADJUSTMENTS</td>
                                             <td style="border-left: 0px">AMOUNT</td>
                                             <td colspan="2" style="border-bottom:0px">
-                                                13th MONTH : 0.00
+                                                13th MONTH : {{is13thMonthSelected ? userDetails.user_salary : 0}}
                                             </td>
                                         </tr>
                                         <tr> 
                                             <td>OVERTIME</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td>{{(Math.round(userDetails.totalOTHours * 100) / 100)}}</td>
+                                            <td>{{(Math.round(userDetails.totalOTHours * 100) / 100) * (userDetails.ratePerHour * .3 + userDetails.ratePerHour)}}</td>
                                             <td>13TH MONTH</td>
-                                            <td>0.00</td>
+                                            <td>{{is13thMonthSelected ? userDetails.user_salary : 0}}</td>
                                             <td>W/H TAX</td>
-                                            <td>0.00</td>
+                                            <td>{{(userDetails.taxDeduction == selectedPeriod) ? userDetails.amountTaxDeduction : '0'}}</td>
                                             <td colspan="2" style="border-bottom:0px; border-top: 0px">
-                                                ALLOWANCE : 0.00
+                                                ALLOWANCE : 0
                                             </td>
                                         </tr>
                                         <tr> 
@@ -309,11 +379,11 @@
                                             <td></td>
                                             <td></td>
                                             <td>INCENTIVE</td>
-                                            <td>0.00</td>
+                                            <td>0</td>
                                             <td>SSS</td>
-                                            <td>0.00</td>
+                                            <td>{{(userDetails.sssDeduction == selectedPeriod) ? userDetails.amountSSSDeduction : '0'}}</td>
                                             <td colspan="2" style="border-bottom:0px; border-top: 0px">
-                                                OTHERS : 0.00
+                                                OTHERS : {{(selectedPeriod == userDetails.otherAdjustments) ? 2000 : 0}}
                                             </td>
                                         </tr>
                                         <tr> 
@@ -321,11 +391,17 @@
                                             <td></td>
                                             <td></td>
                                             <td>PAID LEAVES</td>
-                                            <td>0.00</td>
+                                            <td>{{userDetails.totalLeaveHours * userDetails.ratePerHour}}</td>
                                             <td>PHILHEALTH</td>
-                                            <td>0.00</td>
+                                            <td>{{(userDetails.philhealthDeduction == selectedPeriod) ? userDetails.amountPhilhealthDeduction : '0'}}</td>
                                             <td colspan="2" style="border-bottom:0px; border-top: 0px">
-                                                GROSS PAY : 0.00
+                                                GROSS PAY : 
+                                                {{(userDetails.ratePerHour * userDetails.totalHoursWorked) +
+                                                (userDetails.regularHilidayHours * userDetails.ratePerHour) +
+                                                (userDetails.totalLeaveHours * userDetails.ratePerHour) +
+                                                // Overtime pay
+                                                (Math.round(userDetails.totalOTHours * 100) / 100) * (userDetails.ratePerHour * .3 + userDetails.ratePerHour)
+                                                }}
                                             </td>
                                         </tr>
                                         <tr> 
@@ -333,33 +409,55 @@
                                             <td></td>
                                             <td></td>
                                             <td>HOLIDAY PAY</td>
-                                            <td>{{userDetails.regularHilidayHours*userDetails.ratePerHour}}</td>
+                                            <td>{{userDetails.regularHilidayHours * userDetails.ratePerHour}}</td>
                                             <td>PAG-IBIG</td>
-                                            <td>0.00</td>
+                                            <td>{{(userDetails.pagibigDeduction == selectedPeriod) ? parseFloat(userDetails.amountPagibigDeduction) + parseFloat(userDetails.amountPagibigMp2Deduction) : '0'}}</td>
                                             <td colspan="2" style="border-bottom:0px; border-top: 0px">
-                                                DEDUCTION : 0.00
+                                                DEDUCTION : 
+                                                {{
+                                                    parseFloat(userDetails.amountPhilhealthDeduction) +
+                                                    parseFloat(userDetails.amountSSSDeduction) +
+                                                    parseFloat(userDetails.amountTaxDeduction) + 
+                                                    parseFloat(userDetails.amountPagibigDeduction) +
+                                                    parseFloat(userDetails.amountPagibigMp2Deduction)
+                                                }}
                                             </td>
                                         </tr>
                                         <tr> 
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td>OTHERS</td>
-                                            <td>0.00</td>
-                                            <td>TARDINESS</td>
-                                            <td>0.00</td>
-                                            <td colspan="2">
-                                                <strong>NET PAY</strong> : <strong> 0.00 </strong>
-                                            </td>
-                                        </tr>
-                                        <tr> 
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>OTHERS ADJUSTMENTS</td>
+                                            <td>{{(selectedPeriod == userDetails.otherAdjustments) ? 2000 : 0}}</td>
                                             <td>LOAN</td>
-                                            <td>0.00</td>
+                                            <td>{{(userDetails.loanDeduction == selectedPeriod) ? userDetails.amountLoanDeduction : '0'}}</td>
+                                            <td colspan="2">
+                                                <strong>NET PAY</strong> : <strong>₱
+                                                {{
+                                                ((userDetails.ratePerHour * userDetails.totalHoursWorked) +
+                                                (userDetails.regularHilidayHours * userDetails.ratePerHour) +
+                                                (userDetails.totalLeaveHours * userDetails.ratePerHour) +
+                                                (Math.round(userDetails.totalOTHours * 100) / 100) * (userDetails.ratePerHour * .3 + userDetails.ratePerHour) +
+                                                ((selectedPeriod == userDetails.otherAdjustments) ? 2000 : 0) +
+                                                (is13thMonthSelected ? parseFloat(userDetails.user_salary) : 0)) -
+                                                //Dedcutions
+                                                (parseFloat(userDetails.amountPhilhealthDeduction) +
+                                                parseFloat(userDetails.amountSSSDeduction) +
+                                                parseFloat(userDetails.amountTaxDeduction) + 
+                                                parseFloat(userDetails.amountPagibigDeduction) +
+                                                parseFloat(userDetails.amountPagibigMp2Deduction))
+                                                }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr> 
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>OTHERS DEDUCTIONS</td>
+                                            <td>0</td>
                                             <td colspan="2" style="border-bottom: 0px"></td>
                                         </tr>
                                         <tr> 
@@ -368,8 +466,8 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td>OTHERS</td>
-                                            <td>0.00</td>
+                                            <td></td>
+                                            <td></td>
                                             <td colspan="2" style="border-bottom:0px; border-top: 0px">
                                                   RECEIVED BY:<br/><span class="text-uppercase fw-bold text-decoration-underline">{{userDetails.fullname}}</span>
                                             </td>

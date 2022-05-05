@@ -8,7 +8,8 @@ export default createStore({
     userTimeIn: null,
     sessionData: null,
     lastSelectedView: null,
-    noTimeOutID: null
+    noTimeOutID: null,
+    selectedPayPeriod: null,
   },
   mutations: {
     SET_FULL_CALENDAR_PROPS: function (state, fullCalendarProps) {
@@ -46,6 +47,12 @@ export default createStore({
     },
     RESET_LAST_SELECTED_VIEW: function (state) {
       state.lastSelectedView = null;
+    },
+    SET_SELECTED_PAY_PERIOD: function (state, selectedPayPeriod) {
+      state.selectedPayPeriod = selectedPayPeriod;
+    },
+    RESET_SELECTED_PAY_PERIOD: function (state) {
+      state.selectedPayPeriod = null;
     },
   },
   getters: {
